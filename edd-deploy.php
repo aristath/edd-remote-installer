@@ -34,6 +34,8 @@ if ( ! class_exists( 'EDD_Deployer' ) ) {
 				define( 'EDD_DEPLOY_PLUGIN_FILE', __FILE__ );
 			}
 
+			add_action( 'edd_check_download', array( $this, 'check' ) );
+
 		}
 
 		/**
@@ -82,6 +84,30 @@ if ( ! class_exists( 'EDD_Deployer' ) ) {
 			return $price;
 
 			}
+
+			function check( $data ) {
+
+				$item_name  = urldecode( $data['item_name'] );
+				$args       = array( 'item_name' => $item_name );
+				$download   = get_page_by_title( $item_name, OBJECT, 'download' );
+
+				if ( $download ) {
+
+					$price  = $this->edd_price( $download->ID );
+					$status = ( $price > 0 ) ? 'chargeable' : 'free';
+
+				} else {
+
+					$status = 'invalid';
+
+				}
+
+				echo json_encode( array( 'download' => $result ) );
+
+				exit;
+
+			}
+
 		}
 
 	}

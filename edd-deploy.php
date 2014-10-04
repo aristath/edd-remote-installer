@@ -53,12 +53,12 @@ if ( ! class_exists( 'EDD_Deployer' ) ) {
 
 		/**
 		 * Get the price for a download
+		 * Derived from https://github.com/easydigitaldownloads/Easy-Digital-Downloads/blob/038a293103393cc25c3f4e5592b681c8c8158559/includes/download-functions.php#L155-L206
 		 *
 		 * @since 1.0
 		 * @param int $download_id ID of the download price to show
 		 * @param bool $echo Whether to echo or return the results
 		 * @return void
-		 * This is derived from https://github.com/easydigitaldownloads/Easy-Digital-Downloads/blob/038a293103393cc25c3f4e5592b681c8c8158559/includes/download-functions.php#L155-L206
 		 */
 		function edd_price( $download_id = 0 ) {
 

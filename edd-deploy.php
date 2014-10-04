@@ -46,8 +46,8 @@ if ( ! class_exists( 'EDD_Deployer' ) ) {
 				define( 'EDD_DEPLOY_PLUGIN_FILE', __FILE__ );
 			}
 
-			add_action( 'edd_check_download', array( $this, 'check' ) );
-			add_action( 'edd_get_download', array( $this, 'get_file' ) );
+			add_action( 'edd_check_download', array( $this, 'check_download' ) );
+			add_action( 'edd_get_download', array( $this, 'get_download' ) );
 
 		}
 
@@ -108,7 +108,7 @@ if ( ! class_exists( 'EDD_Deployer' ) ) {
 
 			}
 
-			function check( $data ) {
+			function check_download( $data ) {
 
 				$download = $this->data_to_object( $data );
 
@@ -161,7 +161,7 @@ if ( ! class_exists( 'EDD_Deployer' ) ) {
 
 		}
 
-		function get_file( $data ) {
+		function get_download( $data ) {
 
 			$download = $this->data_to_object( $data );
 			$file_key = get_post_meta( $download->ID, '_edd_sl_upgrade_file_key', true );
@@ -215,13 +215,9 @@ if ( ! class_exists( 'EDD_Deployer' ) ) {
 				$path = realpath( $path );
 
 				if ( ! file_exists( $path ) ) {
-
 					header( 'Location: ' . $file );
-
 				} else {
-
 					readfile( $path );
-
 				}
 
 			} else {

@@ -15,12 +15,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! class_exists( 'EDD_Deployer' ) ) {
 
+	private static $instance;
+
 	/**
 	 * The main plugin loader class
 	 */
 	class EDD_Deployer {
 
-		function __construct() {
+		public static function instance() {
+
+			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof EDD_Deployer ) ) {
+				self::$instance = new EDD_Deployer;
+				self::$instance->runner();
+			}
+
+			return self::$instance;
+		}
+
+		function runner() {
 
 			if ( ! defined( 'EDD_DEPLOY_PLUGIN_DIR' ) ) {
 				define( 'EDD_DEPLOY_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
@@ -35,6 +47,7 @@ if ( ! class_exists( 'EDD_Deployer' ) ) {
 			}
 
 			add_action( 'edd_check_download', array( $this, 'check' ) );
+			add_action( 'edd_get_download', array( $this, 'get_file' ) );
 
 		}
 
@@ -223,4 +236,4 @@ if ( ! class_exists( 'EDD_Deployer' ) ) {
 	}
 
 }
-$edd_deployer = new EDD_Deployer();
+$edd_deployer = EDD_Deployer::instance();

@@ -15,12 +15,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! class_exists( 'EDD_Deployer' ) ) {
 
-	private static $instance;
-
 	/**
 	 * The main plugin loader class
 	 */
 	class EDD_Deployer {
+
+		private static $instance;
 
 		public static function instance() {
 
@@ -96,37 +96,35 @@ if ( ! class_exists( 'EDD_Deployer' ) ) {
 
 			return $price;
 
-			}
+		}
 
-			function data_to_object( $data ) {
+		function data_to_object( $data ) {
 
-				$item_name  = urldecode( $data['item_name'] );
-				$args       = array( 'item_name' => $item_name );
-				$download   = get_page_by_title( $item_name, OBJECT, 'download' );
+			$item_name  = urldecode( $data['item_name'] );
+			$args       = array( 'item_name' => $item_name );
+			$download   = get_page_by_title( $item_name, OBJECT, 'download' );
 
-				return $download;
+			return $download;
 
-			}
+		}
 
-			function check_download( $data ) {
+		function check_download( $data ) {
 
-				$download = $this->data_to_object( $data );
+			$download = $this->data_to_object( $data );
 
-				if ( ! $download ) {
+			if ( ! $download ) {
 
-					$status = 'invalid';
+				$status = 'invalid';
 
-				} else {
+			} else {
 
-					$status = ( 0 < $this->edd_price( $download->ID ) ) ? 'chargeable' : 'free';
-
-				}
-
-				echo json_encode( array( 'download' => $result ) );
-
-				exit;
+				$status = ( 0 < $this->edd_price( $download->ID ) ) ? 'chargeable' : 'free';
 
 			}
+
+			echo json_encode( array( 'download' => $result ) );
+
+			exit;
 
 		}
 
@@ -169,7 +167,7 @@ if ( ! class_exists( 'EDD_Deployer' ) ) {
 
 			$user = array();
 
-			if ( 0 !< $this->edd_price( $download->ID ) ) {
+			if ( 0 >= $this->edd_price( $download->ID ) ) {
 
 				$user['email'] = 'EDD-Deployer';
 				$user['id']    = 'EDD-Deployer';
@@ -179,7 +177,7 @@ if ( ! class_exists( 'EDD_Deployer' ) ) {
 				$args = array(
 					'key'      => urlencode( $data['license'] ),
 					'item_key' => urlencode( $data['item_name'] ),
-				)
+				);
 
 				$edd_sl = edd_software_licensing();
 				$status = $edd_sl->check_license( $args );
@@ -209,7 +207,7 @@ if ( ! class_exists( 'EDD_Deployer' ) ) {
 
 				readfile( $path );
 
-			} elseif ( strpos( $file, WP_CONTENT_URL ) {
+			} elseif ( strpos( $file, WP_CONTENT_URL ) ) {
 
 				$upload_dir = wp_upload_dir();
 				$path = realpath( $path );
@@ -222,7 +220,8 @@ if ( ! class_exists( 'EDD_Deployer' ) ) {
 
 			} else {
 
-				header( 'Locaion: ' $file );
+				header( 'Locaion: ' . $file );
+
 			}
 
 			exit;

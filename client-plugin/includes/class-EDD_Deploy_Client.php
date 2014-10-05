@@ -49,6 +49,19 @@ class EDD_Deploy_Client {
 
 	}
 
+	public static function install_url() {
+
+		$name = urlencode( $_POST['download'] );
+		$slug = $this->slug( $_POST['download'] );
+
+		$license = isset( $_POST['license'] ) ) ? $_POST['license'] : '';
+		$nonce   = wp_create_nonce( 'install-plugin_' . $slug );
+		$url     = admin_url( 'update.php?action=install-plugin&plugin=' . $slug . '&name=' . $name . '&license=' . $license . '&_wpnonce=' . $nonce );
+
+		return $url;
+	}
+
+
 	/**
 	 * Check if he download exists on the remote server and it status (free/chargeable)
 	 */
@@ -164,3 +177,5 @@ class EDD_Deploy_Client {
 	}
 
 }
+
+$edd_deploy_client = new EDD_Deploy_Client();

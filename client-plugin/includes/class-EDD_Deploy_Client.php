@@ -52,14 +52,19 @@ class EDD_Deploy_Client {
 
 	}
 
-	public static function install_url() {
+	public static function install_url( $download_name = '', $license = '' ) {
 
-		$name = urlencode( $_POST['download'] );
-		$slug = $this->slug( $_POST['download'] );
+		$download_name = ( '' == $download_name ) ? $_POST['download'] : $download_name;
 
-		$license = isset( $_POST['license'] ) ) ? $_POST['license'] : '';
-		$nonce   = wp_create_nonce( 'install-plugin_' . $slug );
-		$url     = admin_url( 'update.php?action=install-plugin&plugin=' . $slug . '&name=' . $name . '&license=' . $license . '&_wpnonce=' . $nonce );
+		if ( '' = $license ) {
+			$license = isset( $_POST['license'] ) ? $_POST['license'] : '';
+		} else {
+			$license = '';
+		}
+
+		$name = urlencode( $download_name );
+		$slug = $this->slug( $download_name );
+		$url  = admin_url( 'update.php?action=install-plugin&plugin=' . $slug . '&name=' . $name . '&license=' . $license . '&_wpnonce=' . wp_create_nonce( 'install-plugin_' . $slug ) );
 
 		return $url;
 	}

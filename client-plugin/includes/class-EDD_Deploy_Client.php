@@ -52,7 +52,7 @@ class EDD_Deploy_Client {
 
 	}
 
-	public static function install_url( $download_name = '', $license = '' ) {
+	public static function install_url( $type = 'plugin', $download_name = '', $license = '' ) {
 
 		$download_name = ( '' == $download_name ) ? $_POST['download'] : $download_name;
 
@@ -64,7 +64,7 @@ class EDD_Deploy_Client {
 
 		$name = urlencode( $download_name );
 		$slug = sanitize_title( $download_name );
-		$url  = admin_url( 'update.php?action=install-plugin&plugin=' . $slug . '&name=' . $name . '&license=' . $license . '&_wpnonce=' . wp_create_nonce( 'install-plugin_' . $slug ) );
+		$url  = admin_url( 'update.php?action=install-' . $type . '&' . $type . '=' . $slug . '&name=' . $name . '&license=' . $license . '&_wpnonce=' . wp_create_nonce( 'install-plugin_' . $slug ) );
 
 		return $url;
 	}

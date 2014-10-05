@@ -16,8 +16,8 @@ This is still under heavy development and we would not recommend its use for pro
 ```php
 <?php
 
-$edd_deploy_client = new EDD_Deploy_Client( 'http://example.com' );    // The URL of our site running EDD
-$installation_url  = $edd_deploy_client->install_url( 'Plugin Name' ); // The plugin name.
+$edd_deploy_client = new EDD_Deploy_Client( 'http://example.com' ); // The URL of our site running EDD
+$installation_url  = $edd_deploy_client->install_url( 'plugin', 'Plugin Name' );
 ?>
 ```
 The above will create a URL that will automatically download the plugin from our remote server and install it.

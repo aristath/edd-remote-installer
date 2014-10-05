@@ -17,4 +17,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'EDD_Deploy_Client' ) ) {
 	include( dirname( __FILE__ ) . '/includes/class-EDD_Deploy_Client.php' );
 }
-$edd_deploy_client = new EDD_Deploy_Client( 'http://example.com' );
+
+function prefix_define_downloads() {
+
+	$downloads = array(
+		'plugins' => array(
+			'Plugin 1',
+			'Plugin 2',
+			'Plugin 2',
+		),
+		'themes'  => array(
+			'Theme 1',
+			'Theme 2',
+			'Theme 3',
+		),
+	);
+
+	return $downloads;
+
+}
+add_filter( 'prefix_edd_deployer_downloads', 'prefix_define_downloads' );
+
+function 

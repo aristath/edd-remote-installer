@@ -17,3 +17,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'EDD_Deploy_Client' ) ) {
 	include( dirname( __FILE__ ) . '/includes/class-EDD_Deploy_Client.php' );
 }
+$edd_deploy_client = new EDD_Deploy_Client( 'http://example.com' );

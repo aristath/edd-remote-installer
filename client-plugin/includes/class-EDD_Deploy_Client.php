@@ -4,8 +4,11 @@ class EDD_Deploy_Client {
 
 	private $api_url;
 
-	function __construct() {
+	function __construct( $store_url ) {
+
+		$this->api_url = trailingslashit( $store_url );
 		add_action( 'plugins_api', array($this, 'plugins_api'), 999, 3 );
+
 	}
 
 	/**
@@ -177,5 +180,3 @@ class EDD_Deploy_Client {
 	}
 
 }
-
-$edd_deploy_client = new EDD_Deploy_Client();

@@ -21,3 +21,7 @@ $installation_url  = $edd_deploy_client->install_url( 'plugin', 'Plugin Name' );
 ?>
 ```
 The above will create a URL that will automatically download the plugin from our remote server and install it.
+
+You can simply install the client plugin on a site, change the array containing the downloads and then don't forget to change the URL (http://example.com) to your own.
+
+This has only been tested so far with free plugins.

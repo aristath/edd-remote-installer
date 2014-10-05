@@ -36,7 +36,7 @@ class EDD_Deploy_Client {
 				$api_params = array(
 					'edd_action' => 'get_download',
 					'item_name'  => urlencode( $_GET['name'] ),
-					'license'    => iiset( $_GET['license'] ) ? urlencode( $_GET['license'] ) : null,
+					'license'    => isset( $_GET['license'] ) ? urlencode( $_GET['license'] ) : null,
 				);
 
 				$api = new stdClass();
@@ -56,14 +56,14 @@ class EDD_Deploy_Client {
 
 		$download_name = ( '' == $download_name ) ? $_POST['download'] : $download_name;
 
-		if ( '' = $license ) {
+		if ( '' == $license ) {
 			$license = isset( $_POST['license'] ) ? $_POST['license'] : '';
 		} else {
 			$license = '';
 		}
 
 		$name = urlencode( $download_name );
-		$slug = $this->slug( $download_name );
+		$slug = sanitize_title( $download_name );
 		$url  = admin_url( 'update.php?action=install-plugin&plugin=' . $slug . '&name=' . $name . '&license=' . $license . '&_wpnonce=' . wp_create_nonce( 'install-plugin_' . $slug ) );
 
 		return $url;

@@ -13,7 +13,7 @@ Install and activate the plugin.
 
 This is still under heavy development and we would not recommend its use for production purposes.
 
-```
+```php
 <?php
 
 $edd_deploy_client = new EDD_Deploy_Client( 'http://example.com' );    // The URL of our site running EDD

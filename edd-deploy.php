@@ -30,21 +30,10 @@ if ( ! class_exists( 'EDD_Deployer' ) ) {
 			}
 
 			return self::$instance;
+
 		}
 
 		function runner() {
-
-			if ( ! defined( 'EDD_DEPLOY_PLUGIN_DIR' ) ) {
-				define( 'EDD_DEPLOY_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-			}
-
-			if ( ! defined( 'EDD_DEPLOY_PLUGIN_URL' ) ) {
-				define( 'EDD_DEPLOY_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-			}
-
-			if ( ! defined( 'EDD_DEPLOY_PLUGIN_FILE' ) ) {
-				define( 'EDD_DEPLOY_PLUGIN_FILE', __FILE__ );
-			}
 
 			add_action( 'edd_check_download', array( $this, 'check_download' ) );
 			add_action( 'edd_get_download', array( $this, 'get_download' ) );
@@ -98,27 +87,21 @@ if ( ! class_exists( 'EDD_Deployer' ) ) {
 
 		}
 
-		function data_to_object( $data ) {
-
-			$item_name  = urldecode( $data['item_name'] );
-			$args       = array( 'item_name' => $item_name );
-			$download   = get_page_by_title( $item_name, OBJECT, 'download' );
-
-			return $download;
-
-		}
-
+		/**
+		 * Check the status of the download
+		 */
 		function check_download( $data ) {
 
-			$download = $this->data_to_object( $data );
+			$download = get_page_by_title( urldecode( $data['item_name'] ), OBJECT, 'download' );
 
-			if ( ! $download ) {
+			if ( $download ) {
 
-				$status = 'invalid';
+				$price  = $this->edd_price( $download->ID );
+				$result = ( $price > 0 ) ? 'billable' : 'free';
 
 			} else {
 
-				$status = ( 0 < $this->edd_price( $download->ID ) ) ? 'chargeable' : 'free';
+				$result = 'invalid';
 
 			}
 
@@ -128,107 +111,136 @@ if ( ! class_exists( 'EDD_Deployer' ) ) {
 
 		}
 
-		function system_init() {
 
-			if ( ! edd_is_func_disabled( 'set_time_limit' ) ) {
-				set_time_limit( 0 );
-			}
-			if ( function_exists( 'get_magic_quotes_runtime' ) && get_magic_quotes_runtime() ) {
-				set_magic_quotes_runtime(0);
+		function get_download( $data ) {
+
+			$item_name 	= urldecode( $data['item_name'] );
+
+			$args = array();
+
+			$args['item_name'] = $item_name;
+			$download_object   = get_page_by_title( $item_name, OBJECT, 'download' );
+			$download          = $download_object->ID;
+			$price             = $this->edd_price( $download );
+
+			$user_info = array();
+
+			$user_info['email'] = 'Deployer';
+			$user_info['id']    = 'Deployer';
+			$payment            = -1;
+
+			if ( $price > 0 ) {
+
+				$args['key'] = urldecode( $data['license'] );
+				$edd_sl      = EDD_Software_Licensing();
+				$status      = $edd_sl->check_license( $args );
+
+				if ( 'valid' != $status ) {
+					return $status;
+				}
+
+				$license_id = $edd_sl->get_license_by_key( $args['key'] );
+				$payment_id = get_post_meta( $license_id, '_edd_sl_payment_id', true );
+				$user_info  = edd_get_payment_meta_user_info( $payment_id );
+
 			}
 
-			@session_write_close();
-			if ( function_exists( 'apache_setenv' ) ) @apache_setenv( 'no-gzip', 1 );
-			@ini_set( 'zlib.output_compression', 'Off' );
+			$download_files = edd_get_download_files( $download );
+
+			$key = 0;
+			foreach ( $download_files as $file ) {
+
+				if ( sanitize_title( $file['name'] ) == sanitize_title( $data['item_name'] ) ) {
+
+					break;
+
+				}
+
+				$key++;
+
+			}
+
+			$file = apply_filters( 'edd_requested_file', $download_files[$key]['file'], $download_files, $key );
+
+			$this->build_file( $file );
+
+			edd_record_download_in_log( $download, $key, $user_info, edd_get_ip(), $payment );
+
+			exit;
 
 		}
 
-		function file_headers( $file = false, $ctype ) {
+		function build_file( $file = null ) {
 
-			// Do not proceed if no file has been specified
-			if ( ! $file ) {
+			if ( null == $file ) {
 				return;
 			}
 
+			$requested_file = $file;
+
+			$file_ext = edd_get_file_extension( $file );
+			$ctype    = edd_get_file_ctype( $file_ext );
+
+			if ( ! edd_is_func_disabled( 'set_time_limit' ) && ! ini_get( 'safe_mode' ) ) {
+				set_time_limit( 0 );
+			}
+
+			if ( function_exists( 'get_magic_quotes_runtime' ) && get_magic_quotes_runtime() ) {
+				set_magic_quotes_runtime( 0 );
+			}
+
+			session_write_close();
+			
+			if ( function_exists( 'apache_setenv' ) ) {
+				apache_setenv( 'no-gzip', 1 );
+			}
+			
+			ini_set( 'zlib.output_compression', 'Off' );
+
 			nocache_headers();
+
 			header( 'Robots: none' );
 			header( 'Content-Type: ' . $ctype );
 			header( 'Content-Description: File Transfer' );
 			header( 'Content-Disposition: attachment; filename="' . apply_filters( 'edd_requested_file_name', basename( $file ) ) . '";' );
 			header( 'Content-Transfer-Encoding: binary' );
 
-		}
-
-		function get_download( $data ) {
-
-			$download = $this->data_to_object( $data );
-			$file_key = get_post_meta( $download->ID, '_edd_sl_upgrade_file_key', true );
-
-
-			$user = array();
-
-			if ( 0 >= $this->edd_price( $download->ID ) ) {
-
-				$user['email'] = 'EDD-Deployer';
-				$user['id']    = 'EDD-Deployer';
-
-			} else {
-
-				$args = array(
-					'key'      => urlencode( $data['license'] ),
-					'item_key' => urlencode( $data['item_name'] ),
-				);
-
-				$edd_sl = edd_software_licensing();
-				$status = $edd_sl->check_license( $args );
-
-				if ( 'valid' != $status ) {
-					return $status;
-				}
-
-				$user = edd_get_payment_meta_user_info( get_post_meta( $edd_sl->get_license_by_key( $args['key'] ), '_edd_sl_payment_id', true ) );
-
-			}
-
-			edd_record_download_in_log( $download->ID, $file_key, $user, edd_get_ip(), -1 );
-			$files     = edd_get_download_files( $download->ID );
-			$file      = apply_filters( 'edd_requested_file', $files[$file_key]['file'], $files, $file_key );
-			$filename  = $files[$file_key]['name'];
-
-			$extension = edd_get_file_extension( $file );
-			$ctype     = edd_get_file_ctype( $extension );
-
-			$this->system_init();
-			$this->file_headers( $file, $ctype );
-
 			$path = realpath( $file );
 
-			if ( file_exists( $path ) ) {
+			if ( false === filter_var( $file, FILTER_VALIDATE_URL ) && file_exists( $path ) ) {
 
 				readfile( $path );
 
-			} elseif ( strpos( $file, WP_CONTENT_URL ) ) {
+			} elseif ( strpos( $file, WP_CONTENT_URL ) !== false ) {
 
 				$upload_dir = wp_upload_dir();
+
+				$path = str_replace( WP_CONTENT_URL, WP_CONTENT_DIR, $file );
 				$path = realpath( $path );
 
-				if ( ! file_exists( $path ) ) {
-					header( 'Location: ' . $file );
-				} else {
+				if ( file_exists( $path ) ) {
+
 					readfile( $path );
+
+				} else {
+
+					header( 'Location: ' . $file );
+
 				}
 
 			} else {
 
-				header( 'Locaion: ' . $file );
+				header( 'Location: ' . $file );
 
 			}
-
-			exit;
 
 		}
 
 	}
 
 }
-$edd_deployer = EDD_Deployer::instance();
+
+function edd_deployer_instantiate() {
+	return EDD_Deployer::instance();
+}
+edd_deployer_instantiate();

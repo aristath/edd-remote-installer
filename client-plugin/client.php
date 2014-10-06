@@ -21,7 +21,7 @@ if ( ! class_exists( 'EDD_Deploy_Client' ) ) {
 function prefix_define_downloads( $downloads ) {
 
 	// Add our plugins
-	$downloads['Plugin 1'] = array(
+	$downloads['asasasa'] = array(
 		'type'        => 'plugin',
 		'image'       => 'http://example.com/image.png',
 		'description' => 'This is the plugin description',

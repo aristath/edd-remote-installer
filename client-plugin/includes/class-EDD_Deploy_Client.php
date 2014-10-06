@@ -7,7 +7,7 @@ class EDD_Deploy_Client {
 	function __construct( $store_url ) {
 
 		$this->api_url = trailingslashit( $store_url );
-		add_action( 'plugins_api', array($this, 'plugins_api'), 999, 3 );
+		add_action( 'plugins_api', array( $this, 'plugins_api' ), 99, 3 );
 
 	}
 
@@ -52,21 +52,21 @@ class EDD_Deploy_Client {
 
 	}
 
-	public static function install_url( $type = 'plugin', $download_name = '', $license = '' ) {
+	public static function install_url( $type = 'plugin', $name = '', $license = '' ) {
 
-		$download_name = ( '' == $download_name ) ? $_POST['download'] : $download_name;
+		$name = ( '' == $name ) ? $_POST['download'] : $name;
+		$slug = sanitize_title_with_dashes( $name );
 
-		if ( '' == $license ) {
-			$license = isset( $_POST['license'] ) ? $_POST['license'] : '';
-		} else {
-			$license = '';
+		$license = '';
+
+		if ( isset( $_POST['license'] ) ) {
+			$license = $_POST['license'];
 		}
 
-		$name = urlencode( $download_name );
-		$slug = sanitize_title( $download_name );
-		$url  = admin_url( 'update.php?action=install-' . $type . '&' . $type . '=' . $slug . '&name=' . $name . '&license=' . $license . '&_wpnonce=' . wp_create_nonce( 'install-plugin_' . $slug ) );
+		$url = admin_url( 'update.php?action=install-' . $type . '&' . $type . '=' . $slug . '&name=' . $name . '&license=' . $license . '&_wpnonce=' . wp_create_nonce( 'install-plugin_' . $slug ) . '&edd_deploy=1' );
 
 		return $url;
+
 	}
 
 

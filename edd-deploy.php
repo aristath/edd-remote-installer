@@ -147,20 +147,7 @@ if ( ! class_exists( 'EDD_Deployer' ) ) {
 
 			$download_files = edd_get_download_files( $download );
 
-			$key = 0;
-			foreach ( $download_files as $file ) {
-
-				if ( sanitize_title( $file['name'] ) == sanitize_title( $data['item_name'] ) ) {
-
-					break;
-
-				}
-
-				$key++;
-
-			}
-
-			$file = apply_filters( 'edd_requested_file', $download_files[$key]['file'], $download_files, $key );
+			$file = apply_filters( 'edd_requested_file', $download_files[0]['file'], $download_files, $key );
 
 			$this->build_file( $file );
 

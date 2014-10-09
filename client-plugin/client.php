@@ -14,6 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+if ( ! defined( 'EDD_DEPLOY_PLUGIN_URL' ) ) {
+	define( 'EDD_DEPLOY_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+}
+
 if ( ! class_exists( 'EDD_Deploy_Client' ) ) {
 	include( dirname( __FILE__ ) . '/includes/class-EDD_Deploy_Client.php' );
 }
@@ -21,7 +25,7 @@ if ( ! class_exists( 'EDD_Deploy_Client' ) ) {
 function prefix_define_downloads( $downloads ) {
 
 	// Add our plugins
-	$downloads['asasasa'] = array(
+	$downloads['Shoestrap Shortcodes'] = array(
 		'type'        => 'plugin',
 		'image'       => 'http://example.com/image.png',
 		'description' => 'This is the plugin description',
@@ -61,7 +65,7 @@ class prefix_Admin_Page {
 
 	function  settings_page () {
 
-		$deployer = new EDD_Deploy_Client( 'http://example.com' );
+		$deployer = new EDD_Deploy_Client( 'http://local.wordpress-trunk.dev' );
 
 		$downloads = apply_filters( 'prefix_edd_deployer_downloads', array() );
 		?>
@@ -84,11 +88,13 @@ class prefix_Admin_Page {
 							<?php if ( '' != $value['description'] ) : ?>
 								<p class="deployer-item-description"><?php echo $value['description']; ?></p>
 							<?php endif; ?>
+							<span class="eddri-status">Not Installed</span>
 
 							<p class="deployer-actions">
 								<a class="button button-primary" href="<?php echo $deployer->install_url( $value['type'], $download ); ?>">
 									<?php _e( 'install', 'prefix' ); ?>
 								</a>
+								<a class="button" data-edd-install="<?php echo $download; ?>">DEPLOY</a>
 							</p>
 						</div>
 					</div>

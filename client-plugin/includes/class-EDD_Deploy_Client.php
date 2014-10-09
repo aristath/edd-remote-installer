@@ -9,6 +9,15 @@ class EDD_Deploy_Client {
 		$this->api_url = trailingslashit( $store_url );
 		add_action( 'plugins_api', array( $this, 'plugins_api' ), 99, 3 );
 
+		add_action( 'admin_footer', array( $this, 'register_scripts' ) );
+
+		add_action( 'edd_deployer_check_download', array( $this, 'check_download') );
+		add_action( 'edd_deployer_deploy', array( $this, 'deploy') );
+
+	}
+
+	public function register_scripts() {
+		wp_enqueue_script( 'edd_deployer_script', EDD_DEPLOY_PLUGIN_URL . 'assets/js/edd-deploy.js', array( 'jquery' ) );
 	}
 
 	/**
@@ -31,18 +40,18 @@ class EDD_Deploy_Client {
 
 		if ( 'plugin_information' == $action ) {
 
-			if ( isset( $_GET['edd_deploy'] ) ) {
+			if ( isset( $_POST['edd_deploy'] ) ) {
 
 				$api_params = array(
 					'edd_action' => 'get_download',
-					'item_name'  => urlencode( $_GET['name'] ),
-					'license'    => isset( $_GET['license'] ) ? urlencode( $_GET['license'] ) : null,
+					'item_name'  => urlencode( $_POST['name'] ),
+					'license'    => isset( $_POST['license'] ) ? urlencode( $_POST['license'] ) : null,
 				);
 
 				$api = new stdClass();
 				$api->name          = $args->slug;
 				$api->version       = '';
-				$api->download_link = add_query_arg( $api_params, $this->api_url );;
+				$api->download_link = $this->api_url . '?edd_action=get_download&item_name=' . $api_args['item_name'] . '&license=' . $api_args['license'];
 
 			}
 

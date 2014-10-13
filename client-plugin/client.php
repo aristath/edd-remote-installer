@@ -27,20 +27,30 @@ function prefix_define_downloads( $downloads ) {
 	// Add our plugins
 	$downloads['Shoestrap Shortcodes'] = array(
 		'type'        => 'plugin',
-		'image'       => 'http://example.com/image.png',
-		'description' => 'This is the plugin description',
+		'image'       => 'http://dummyimage.com/600x400/333333/fff.png&text=Dummy+item+image',
+		'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ornare gravida mauris, vel vehicula purus auctor imperdiet. Maecenas a commodo magna, vel semper purus. Etiam id ipsum urna.',
 	);
 	$downloads['Plugin 2'] = array(
 		'type'        => 'plugin',
-		'image'       => 'http://example.com/image.png',
-		'description' => 'This is the plugin description',
+		'image'       => 'http://dummyimage.com/600x400/333333/fff.png&text=Dummy+item+image',
+		'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ornare gravida mauris, vel vehicula purus auctor imperdiet. Maecenas a commodo magna, vel semper purus. Etiam id ipsum urna.',
 	);
 
 	// Add our themes
 	$downloads['Theme 1'] = array(
 		'type'        => 'theme',
-		'image'       => 'http://example.com/image.png',
-		'description' => 'This is the theme description',
+		'image'       => 'http://dummyimage.com/600x400/333333/fff.png&text=Dummy+item+image',
+		'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ornare gravida mauris, vel vehicula purus auctor imperdiet. Maecenas a commodo magna, vel semper purus. Etiam id ipsum urna.',
+	);
+	$downloads['Theme 2'] = array(
+		'type'        => 'theme',
+		'image'       => 'http://dummyimage.com/600x400/333333/fff.png&text=Dummy+item+image',
+		'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ornare gravida mauris, vel vehicula purus auctor imperdiet. Maecenas a commodo magna, vel semper purus. Etiam id ipsum urna.',
+	);
+	$downloads['Theme 3'] = array(
+		'type'        => 'theme',
+		'image'       => 'http://dummyimage.com/600x400/333333/fff.png&text=Dummy+item+image',
+		'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ornare gravida mauris, vel vehicula purus auctor imperdiet. Maecenas a commodo magna, vel semper purus. Etiam id ipsum urna.',
 	);
 
 	return $downloads;
@@ -70,11 +80,18 @@ class prefix_Admin_Page {
 		$downloads = apply_filters( 'prefix_edd_deployer_downloads', array() );
 		?>
 
+		<style>.deploy-item { width: 32%; margin-right: 1%; float: left; min-width: 250px; } .deploy-item h3.hndle { padding: 0 1em 1em 1em; } .deploy-item img { width: 100%; height: auto; }</style>
 		<div class="wrap">
 
 			<h2><?php _e( 'Deployer Demo', 'prefix' ); ?></h2>
 
-			<?php foreach ( $downloads as $download => $value ) { ?>
+			<?php
+
+			$i = 0;
+			foreach ( $downloads as $download => $value ) {
+
+				$i = $i == 3 ? 0 : $i;
+				if ( $i == 0 ) { echo '<div style="clear:both; display: block; float: none;"></div>'; } ?>
 
 				<div id="<?php echo sanitize_title( $download ); ?>" class="deploy-item postbox <?php echo $value['type']; ?>">
 					<h3 class="hndle"><span><?php echo $download; ?></span></h3>
@@ -88,19 +105,12 @@ class prefix_Admin_Page {
 							<?php if ( '' != $value['description'] ) : ?>
 								<p class="deployer-item-description"><?php echo $value['description']; ?></p>
 							<?php endif; ?>
-							<span class="eddri-status">Not Installed</span>
-
-							<p class="deployer-actions">
-								<a class="button button-primary" href="<?php echo $deployer->install_url( $value['type'], $download ); ?>">
-									<?php _e( 'install', 'prefix' ); ?>
-								</a>
-								<a class="button" data-edd-install="<?php echo $download; ?>">DEPLOY</a>
-							</p>
+							<p class="deployer-actions"></p>
 						</div>
 					</div>
 				</div>
 
-			<?php } ?>
+			<?php $i++; } ?>
 
 		</div>
 

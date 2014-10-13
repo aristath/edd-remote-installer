@@ -8,6 +8,7 @@ class EDD_Deploy_Client {
 
 		$this->api_url = trailingslashit( $store_url );
 		add_action( 'plugins_api', array( $this, 'plugins_api' ), 99, 3 );
+		add_action( 'admin_init', array( $this, 'deploy' ) );
 
 		add_action( 'admin_footer', array( $this, 'register_scripts' ) );
 
@@ -72,12 +73,11 @@ class EDD_Deploy_Client {
 			$license = $_POST['license'];
 		}
 
-		$url = admin_url( 'update.php?action=install-' . $type . '&' . $type . '=' . $slug . '&name=' . $name . '&license=' . $license . '&_wpnonce=' . wp_create_nonce( 'install-plugin_' . $slug ) . '&edd_deploy=1' );
+		$url = admin_url( 'update.php?action=install-' . $type . '&' . $type . '=' . $slug . '&name=' . $slug . '&license=' . $license . '&_wpnonce=' . wp_create_nonce( 'install-plugin_' . $slug ) . '&edd_deploy' );
 
 		return $url;
 
 	}
-
 
 	/**
 	 * Check if he download exists on the remote server and it status (free/chargeable)
@@ -136,6 +136,10 @@ class EDD_Deploy_Client {
 
 		$download = $_POST['download'];
 
+		if ( ! $_POST['edd_deploy'] ) {
+			return;
+		}
+
 		// If this is a chargeable product and a license is needed,
 		// Try to validate it and if valid, activate it.
 		if ( isset( $_POST['license'] ) ) {
@@ -180,7 +184,7 @@ class EDD_Deploy_Client {
 			include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 		}
 
-		$upgrader = new Plugin_Upgrader();
+		$upgrader = new Plugin_Upgrader( $skin = new Plugin_Installer_Skin( compact( 'type', 'title', 'url', 'nonce', 'plugin', 'api' ) ) );
 		$install  = $upgrader->install( $download_link );
 
 		if ( $install == 1 ) {

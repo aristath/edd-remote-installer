@@ -105,7 +105,9 @@ class prefix_Admin_Page {
 							<?php if ( '' != $value['description'] ) : ?>
 								<p class="deployer-item-description"><?php echo $value['description']; ?></p>
 							<?php endif; ?>
-							<p class="deployer-actions"></p>
+							<p class="deployer-actions">
+								<a class="button button-primary" data-deploy="<?php echo $download; ?>"><?php _e( 'Install' ); ?></a>
+							</p>
 						</div>
 					</div>
 				</div>

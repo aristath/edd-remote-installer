@@ -27,11 +27,13 @@ function prefix_define_downloads( $downloads ) {
 	// Add our plugins
 	$downloads['Shoestrap Shortcodes'] = array(
 		'type'        => 'plugin',
+		"free"        => true,
 		'image'       => 'http://dummyimage.com/600x400/333333/fff.png&text=Dummy+item+image',
 		'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ornare gravida mauris, vel vehicula purus auctor imperdiet. Maecenas a commodo magna, vel semper purus. Etiam id ipsum urna.',
 	);
-	$downloads['Plugin 2'] = array(
+	$downloads['Shoestrap 3 Gridder Addon'] = array(
 		'type'        => 'plugin',
+		"free"        => false,
 		'image'       => 'http://dummyimage.com/600x400/333333/fff.png&text=Dummy+item+image',
 		'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ornare gravida mauris, vel vehicula purus auctor imperdiet. Maecenas a commodo magna, vel semper purus. Etiam id ipsum urna.',
 	);
@@ -61,11 +63,14 @@ add_filter( 'prefix_edd_deployer_downloads', 'prefix_define_downloads' );
 
 class prefix_Admin_Page {
 
+	private $_deployer;
+
 	function __construct() {
 
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 		add_action( 'prefix_deployer_admin_page_content', 'prefix_deployer_admin_page_content' );
-
+		$this->_deployer = new EDD_Deploy_Client( 'http://press.codes');
+		add_thickbox();
 	}
 
 	function admin_menu () {
@@ -74,8 +79,6 @@ class prefix_Admin_Page {
 	}
 
 	function  settings_page () {
-
-		$deployer = new EDD_Deploy_Client( 'http://local.wordpress-trunk.dev' );
 
 		$downloads = apply_filters( 'prefix_edd_deployer_downloads', array() );
 		?>
@@ -88,6 +91,7 @@ class prefix_Admin_Page {
 			<?php
 
 			$i = 0;
+
 			foreach ( $downloads as $download => $value ) {
 
 				$i = $i == 3 ? 0 : $i;
@@ -106,7 +110,8 @@ class prefix_Admin_Page {
 								<p class="deployer-item-description"><?php echo $value['description']; ?></p>
 							<?php endif; ?>
 							<p class="deployer-actions">
-								<a class="button button-primary" data-deploy="<?php echo $download; ?>"><?php _e( 'Install' ); ?></a>
+								<span class="spinner"></span>
+								<button class="button button-primary" data-free="<?php echo (int) $value['free']; ?>" <?php echo $this->_deployer->is_plugin_installed($download) ?  "disabled='disabled'" : "";  ?> data-deploy="<?php echo $download; ?>"><?php echo $this->_deployer->is_plugin_installed($download) ? __( 'Installed' ) : __( 'Install' ); ?></button>
 							</p>
 						</div>
 					</div>
@@ -114,12 +119,24 @@ class prefix_Admin_Page {
 
 			<?php $i++; } ?>
 
+			<div id="edd_deployer_license_thickbox" style="display:none;">
+				<h3><?php _e("Please provide license"); ?></h3>
+				<form action="" method="post" id="edd_deployer_license_form">
+						<input style="width: 100%" type="text" id="edd_deployer_license"/>
+
+						<button style="margin-top: 10px" type="submit" class="button button-primary"><?php _e("Submit"); ?></button>
+				</form>
+			</div>
+
+
 		</div>
 
 
 		<?php
 
 	}
+
+
 
 }
 new prefix_Admin_Page;

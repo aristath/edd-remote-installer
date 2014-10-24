@@ -37,8 +37,44 @@ if ( ! class_exists( 'EDD_Deployer' ) ) {
 
 			add_action( 'edd_check_download', array( $this, 'check_download' ) );
 			add_action( 'edd_get_download', array( $this, 'get_download' ) );
+			add_action( 'edd_get_downloads', array( $this, 'get_downloads' ) );
 
 		}
+		
+		/**
+		 * Get a json array of our downloads
+		 */
+		 function get_downloads() {
+		 
+		 $downloads_array = array();		 
+		 $cats_array      = array();
+			 
+			 $query_args = array(
+			 	'post_type'      => 'download',
+			 	'posts_per_page' => -1,
+			 );
+			 
+			 $downloads = get_posts( $query_args );
+			 
+			 foreach ( $downloads as $download ) {
+
+				 $downloads_array[] = array(
+				 	'id'          => $download->ID,
+				 	'title'       => $download->post_title,
+				 	'description' => $download->post_excerpt,
+				 	'bundle'      => edd_is_bundled_product( $download->ID ) ? 1 : 0,
+				 	'price'       => edd_price( $download->ID, false ),
+				 	'free'        => 0 != $this->edd_price( $download->ID ) ? 0 : 1,
+				 	'thumbnail'   => wp_get_attachment_image_src( get_post_thumbnail_id( $download->ID ), 'full' ),
+				 );
+
+			 }
+			 
+			 echo json_encode( $downloads_array );
+
+			 exit;
+
+		 }
 
 		/**
 		 * Get the price for a download

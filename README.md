@@ -36,3 +36,5 @@ Licenses are created using the [EDD Software Licensing](https://easydigitaldownl
 ## A Word of CAUTION
 
 This plugin is still at an early stage in its development and needs a lot of things to be fixed. This is for the time being a proof of concept and an invitation to collaborate and build a kick-ass installer for our EDD-based stores.
+
+We know there are many mistakes, wrong function names etc. These will be fixed and improved soon.

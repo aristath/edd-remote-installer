@@ -349,37 +349,42 @@ class EDD_Deploy_Client {
 
 		foreach ( $downloads as $download ) {
 
-			$data_free   = (int) $download['free'];
-			$disabled    = $this->is_plugin_installed( $download['title'] ) ? ' disabled="disabled" ' : '';
-			$button_text = $this->is_plugin_installed( $download['title'] ) ? __( 'Installed' ) : __( 'Install' );
+			if ( ! $download['bundle'] ) {
 
-			$i = $i == 3 ? 0 : $i;
-			if ( $i == 0 ) {
-				echo '<div style="clear:both; display: block; float: none;"></div>';
-			}
+				$data_free   = (int) $download['free'];
+				$disabled    = $this->is_plugin_installed( $download['title'] ) ? ' disabled="disabled" ' : '';
+				$button_text = $this->is_plugin_installed( $download['title'] ) ? __( 'Installed' ) : __( 'Install' );
 
-			echo '<div id="' . sanitize_title( $download['title'] ) . '" class="deploy-item postbox">';
-				echo '<h3 class="hndle"><span>' . $download['title'] . '</span></h3>';
-				echo '<div class="inside">';
-					echo '<div class="main">';
+				$i = $i == 3 ? 0 : $i;
+				if ( $i == 0 ) {
+					echo '<div style="clear:both; display: block; float: none;"></div>';
+				}
 
-						if ( '' != $download['thumbnail'] ) {
-							echo '<img class="deployer-item-image" src="' . $download['thumbnail'][0] . '">';
-						}
+				echo '<div id="' . sanitize_title( $download['title'] ) . '" class="deploy-item postbox">';
+					echo '<h3 class="hndle"><span>' . $download['title'] . '</span></h3>';
+					echo '<div class="inside">';
+						echo '<div class="main">';
 
-						if ( '' != $download['description'] ) {
-							echo '<p class="deployer-item-description">' . $download['description'] . '</p>';
-						}
+							if ( '' != $download['thumbnail'] ) {
+								echo '<img class="deployer-item-image" src="' . $download['thumbnail'][0] . '">';
+							}
 
-						echo '<p class="deployer-actions">';
-							echo '<span class="spinner"></span>';
-							echo '<button class="button button-primary" data-free="' . $data_free . '"' . $disabled . 'data-deploy="' . $download['title'] . '">' . $button_text . '</button>';
-						echo '</p>';
+							if ( '' != $download['description'] ) {
+								echo '<p class="deployer-item-description">' . $download['description'] . '</p>';
+							}
+
+							echo '<p class="deployer-actions">';
+								echo '<span class="spinner"></span>';
+								echo '<button class="button button-primary" data-free="' . $data_free . '"' . $disabled . 'data-deploy="' . $download['title'] . '">' . $button_text . '</button>';
+							echo '</p>';
+						echo '</div>';
 					echo '</div>';
 				echo '</div>';
-			echo '</div>';
 
-			$i++;
+				$i++;
+
+			}
+
 		}
 
 		echo '<div id="edd_deployer_license_thickbox" style="display:none;">';

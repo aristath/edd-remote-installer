@@ -14,7 +14,9 @@ This will expose 3 new actions to EDD:
 `get_download` gets the file of the download
 `get_downloads` gets a json array of all the available products.
 
-The plugin currently does not have any options, though we will be adding some real soon.
+After you install the plugin, You will have to go to its admin page (under settings) and select a download category for your plugins and another one for your themes.
+
+This will allow you to limit the products that will be available for remote installation using categories.
 
 ### Client-side
 
@@ -36,3 +38,5 @@ Licenses are created using the [EDD Software Licensing](https://easydigitaldownl
 ## A Word of CAUTION
 
 This plugin is still at an early stage in its development and needs a lot of things to be fixed. This is for the time being a proof of concept and an invitation to collaborate and build a kick-ass installer for our EDD-based stores.
+
+Themes installation currently does not work, but plugins are fully operational.

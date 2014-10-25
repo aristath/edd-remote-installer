@@ -347,7 +347,10 @@ class EDD_Deploy_Client {
 
 		$i = 0;
 
-		foreach ( $downloads as $download ) {
+		$plugins = $downloads['plugins'];
+		$themes  = $downloads['themes'];
+
+		foreach ( $plugins as $download ) {
 
 			if ( ! $download['bundle'] ) {
 
@@ -360,7 +363,7 @@ class EDD_Deploy_Client {
 					echo '<div style="clear:both; display: block; float: none;"></div>';
 				}
 
-				echo '<div id="' . sanitize_title( $download['title'] ) . '" class="deploy-item postbox">';
+				echo '<div id="' . sanitize_title( $download['title'] ) . '" class="deploy-item postbox plugin">';
 					echo '<h3 class="hndle"><span>' . $download['title'] . '</span></h3>';
 					echo '<div class="inside">';
 						echo '<div class="main">';

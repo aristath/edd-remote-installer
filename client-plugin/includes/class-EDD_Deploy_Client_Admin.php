@@ -21,7 +21,12 @@ class EDD_Deploy_Client_Admin extends EDD_Deploy_Client {
 	}
 
 	public function register_scripts() {
+
 		wp_enqueue_script( 'edd_deployer_script', EDD_DEPLOY_PLUGIN_URL . 'assets/js/edd-deploy.js', array( 'jquery' ) );
+
+		wp_register_style( 'edd_deploy_css', EDD_DEPLOY_PLUGIN_URL . 'assets/css/style.css', false );
+        wp_enqueue_style( 'edd_deploy_css' );
+
 	}
 
 	function get_downloads() {
@@ -41,10 +46,8 @@ class EDD_Deploy_Client_Admin extends EDD_Deploy_Client {
 
 	function settings_page() {
 
-		echo '<style>.deploy-item { width: 32%; margin-right: 1%; float: left; min-width: 250px; } .deploy-item h3.hndle { padding: 0 1em 1em 1em; } .deploy-item img { width: 100%; height: auto; }</style>';
-
 		echo '<div class="wrap">';
-		echo '<h2>' . __( 'Deployer Demo', 'prefix' ) . '</h2>';
+		echo '<h2>' . __( 'EDD Deployer', 'edd_deploy' ) . '</h2>';
 
 		$downloads = $this->get_downloads();
 
@@ -59,7 +62,7 @@ class EDD_Deploy_Client_Admin extends EDD_Deploy_Client {
 
 				$data_free   = (int) $download['free'];
 				$disabled    = $this->is_plugin_installed( $download['title'] ) ? ' disabled="disabled" ' : '';
-				$button_text = $this->is_plugin_installed( $download['title'] ) ? __( 'Installed' ) : __( 'Install' );
+				$button_text = $this->is_plugin_installed( $download['title'] ) ? __( 'Installed', 'edd_deploy' ) : __( 'Install', 'edd_deploy' );
 
 				$i = $i == 3 ? 0 : $i;
 				if ( $i == 0 ) {
@@ -82,6 +85,7 @@ class EDD_Deploy_Client_Admin extends EDD_Deploy_Client {
 							echo '<p class="deployer-actions">';
 								echo '<span class="spinner"></span>';
 								echo '<button class="button button-primary" data-free="' . $data_free . '"' . $disabled . 'data-deploy="' . $download['title'] . '">' . $button_text . '</button>';
+								echo ' <a class="button" target="_blank" href="' . trailingslashit( $this->api_url ) . '?p=' . $download['id'] . '">' . __( 'Details', 'edd_deploy' ) . '</a>';
 							echo '</p>';
 						echo '</div>';
 					echo '</div>';
@@ -94,10 +98,10 @@ class EDD_Deploy_Client_Admin extends EDD_Deploy_Client {
 		}
 
 		echo '<div id="edd_deployer_license_thickbox" style="display:none;">';
-		echo '<h3>' . __( 'Enter your license') . '</h3>';
+		echo '<h3>' . __( 'Enter your license', 'edd_deploy' ) . '</h3>';
 		echo '<form action="" method="post" id="edd_deployer_license_form">';
 		echo '<input style="width: 100%" type="text" id="edd_deployer_license"/>';
-		echo '<button style="margin-top: 10px" type="submit" class="button button-primary">' . __( 'Submit' ) . '</button>';
+		echo '<button style="margin-top: 10px" type="submit" class="button button-primary">' . __( 'Submit', 'edd_deploy' ) . '</button>';
 		echo '</form>';
 		echo '</div>';
 

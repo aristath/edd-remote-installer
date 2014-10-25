@@ -63,26 +63,25 @@ class EDD_Deploy_Client {
 	 *
 	 * @access public
 	 */
-	public function install(){
+	public function install() {
 		$this->check_capabilities();
 
 		$download = $_POST['download'];
-		$license = $_POST['license'];
-
-		$message = __("An Error Happened");
+		$license  = $_POST['license'];
+		$message  = __( 'An Error Occured', 'edd_deploy' );
 		$download_type = $this->_check_download($download);
 
 		/**
 		 * Throw error of the product is not free and license it empty
 		 */
-		if( empty( $download ) || ( empty( $license ) && $download_type !== "free" )){
-			wp_send_json_error($message);
+		if ( empty( $download ) || ( empty( $license ) && 'free' !== $download_type )){
+			wp_send_json_error( $message );
 		}
 
 		/**
 		 * Install the plugin if it's free
 		 */
-		if( $download_type === "free" ){
+		if ( 'free' === $download_type ) {
 			$installed = $this->_install_plugin( $download, "" );
 			wp_send_json_success( $installed );
 		}
@@ -90,11 +89,11 @@ class EDD_Deploy_Client {
 		/**
 		 * Check for license and then install if it's a valid licens
 		 */
-		if( $this->_check_license($license, $download) ){
+		if ( $this->_check_license( $license, $download ) ) {
 			$installed = $this->_install_plugin( $download, $license );
 			wp_send_json_success( $installed );
-		}else{
-			wp_send_json_error(__("Invalid license"));
+		} else {
+			wp_send_json_error( __( 'Invalid License', 'edd_deploy' ) );
 		}
 
 
@@ -109,7 +108,8 @@ class EDD_Deploy_Client {
 	 *
 	 * @return bool
 	 */
-	private function _check_license( $license, $download ){
+	private function _check_license( $license, $download ) {
+
 		$api_args = array(
 			'edd_action' => 'activate_license',
 			'license'    => $license,
@@ -126,7 +126,8 @@ class EDD_Deploy_Client {
 
 		// decode the license data
 		$license_data = json_decode( wp_remote_retrieve_body( $response ) );
-		return $license_data->license === "valid";
+		return $license_data->license === 'valid';
+
 	}
 
 	/**
@@ -136,7 +137,7 @@ class EDD_Deploy_Client {
 	 *
 	 * @return bool
 	 */
-	private function _install_plugin( $download,  $license){
+	private function _install_plugin( $download,  $license) {
 
 		$api_args = array(
 			'edd_action' => 'get_download',
@@ -162,11 +163,11 @@ class EDD_Deploy_Client {
 	 *
 	 * @return string free|type2|type3
 	 */
-	private function _check_download($download) {
+	private function _check_download( $download ) {
 		// Check the user's capabilities before proceeding
 		$this->check_capabilities();
 
-		if( $this->is_plugin_installed( $download ) ) die( json_encode( __("Already installed") ) );
+		if ( $this->is_plugin_installed( $download ) ) die( json_encode( __( 'Already Installed', 'edd_deploy' ) ) );
 
 		$api_params = array(
 			'edd_action' => 'check_download',
@@ -174,12 +175,12 @@ class EDD_Deploy_Client {
 		);
 
 		// Send our details to the remote server
-		$request = wp_remote_post( $this->api_url, array( 'timeout' => 15, 'sslverify' => false, 'body' => $api_params ) );
+		$request  = wp_remote_post( $this->api_url, array( 'timeout' => 15, 'sslverify' => false, 'body' => $api_params ) );
 		$response = 'invalid';
 		// There was no error, we can proceed
 		if ( ! is_wp_error( $request ) ) {
 
-			$request = maybe_unserialize( json_decode( wp_remote_retrieve_body( $request ) ) );
+			$request  = maybe_unserialize( json_decode( wp_remote_retrieve_body( $request ) ) );
 			$response = isset( $request->download  ) ? $request->download  : $response;
 
 		} else {
@@ -201,14 +202,17 @@ class EDD_Deploy_Client {
 	public function is_plugin_installed( $plugin_name ){
 
 		$return = false;
-		if( empty( $plugin_name ) ) return $return;
+		if ( empty( $plugin_name ) ) return $return;
 
-		foreach( get_plugins() as $plugin ){
-			if( $plugin['Name'] === $plugin_name ){
+		foreach ( get_plugins() as $plugin ) {
+
+			if ( $plugin['Name'] === $plugin_name ) {
 				$return = true;
 			}
+
 		}
 		return $return;
+
 	}
 
 }

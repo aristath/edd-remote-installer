@@ -36,7 +36,3 @@ Licenses are created using the [EDD Software Licensing](https://easydigitaldownl
 ## A Word of CAUTION
 
 This plugin is still at an early stage in its development and needs a lot of things to be fixed. This is for the time being a proof of concept and an invitation to collaborate and build a kick-ass installer for our EDD-based stores.
-
-Not all items on the demo list can be installed because not all of them are WordPress plugins. Some are themes, some are completely irrelevant.
-
-We know there are many mistakes, wrong function names etc. These will be fixed and improved soon.

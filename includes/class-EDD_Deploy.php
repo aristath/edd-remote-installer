@@ -52,7 +52,7 @@ class EDD_Deploy {
 				array(
 					'taxonomy' => 'download_category',
 					'field'    => 'id',
-					'terms'     => $options['edd_deploy_themes_select']
+					'terms'    => $options['edd_deploy_themes_select']
 				)
 			)
 		);

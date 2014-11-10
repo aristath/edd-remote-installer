@@ -1,16 +1,16 @@
 jQuery(function ($) {
 
-    $(document).on('click', 'button[data-deploy]', function (e) {
+    $(document).on('click', 'button[data-edd-ri]', function (e) {
         e.preventDefault();
         var $this = $(this),
-            $spinner = $this.closest(".deployer-actions").find(".spinner"),
+            $spinner = $this.closest(".edd-ri-actions").find(".spinner"),
             install = function( license ){
                 license = typeof license == "undefined" ? "" : license;
                 $spinner.show();
                 tb_remove();
                 var data = {
-                    action: 'edd_deployer_install',
-                    download: $this.data('deploy'),
+                    action: 'edd_ri_install',
+                    download: $this.data('edd-ri'),
                     license: license
                 };
 
@@ -41,10 +41,10 @@ jQuery(function ($) {
         $this.attr("disabled", true);
 
         if( !$this.data("free") ){
-            tb_show("", "#TB_inline?width=400&height=150&inlineId=edd_deployer_license_thickbox");
-            $("#edd_deployer_license_form").on("submit", function(e){
+            tb_show("", "#TB_inline?width=400&height=150&inlineId=edd_ri_license_thickbox");
+            $("#edd_ri_license_form").on("submit", function(e){
                 e.preventDefault();
-                var $license =  $("#edd_deployer_license"),
+                var $license =  $("#edd_ri_license"),
                     license = $license.val();
                 if( license.length === 0 ){
                     $license.css({

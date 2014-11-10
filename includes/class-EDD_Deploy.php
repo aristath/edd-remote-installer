@@ -1,16 +1,16 @@
 <?php
 
 /**
-* The main deployer class
+* The main remote installer class
 */
-class EDD_Deploy {
+class EDD_RI {
 
 	private static $instance;
 
 	public static function instance() {
 
-		if ( ! isset( self::$instance ) && ! ( self::$instance instanceof EDD_Deployer ) ) {
-			self::$instance = new EDD_Deploy;
+		if ( ! isset( self::$instance ) && ! ( self::$instance instanceof EDD_RI ) ) {
+			self::$instance = new EDD_RI;
 			self::$instance->runner();
 		}
 
@@ -31,7 +31,7 @@ class EDD_Deploy {
 	*/
 	function get_downloads() {
 
-		$options = get_option( 'edd_deploy_settings' );
+		$options = get_option( 'edd_ri_settings' );
 
 		$plugins_query_args = array(
 			'post_type'        => 'download',
@@ -40,7 +40,7 @@ class EDD_Deploy {
 				array(
 					'taxonomy' => 'download_category',
 					'field'    => 'id',
-					'terms'    => $options['edd_deploy_plugins_select']
+					'terms'    => $options['edd_ri_plugins_select']
 				)
 			)
 		);
@@ -52,7 +52,7 @@ class EDD_Deploy {
 				array(
 					'taxonomy' => 'download_category',
 					'field'    => 'id',
-					'terms'    => $options['edd_deploy_themes_select']
+					'terms'    => $options['edd_ri_themes_select']
 				)
 			)
 		);
@@ -179,8 +179,8 @@ class EDD_Deploy {
 
 		$user_info = array();
 
-		$user_info['email'] = 'Deployer';
-		$user_info['id']    = 'Deployer';
+		$user_info['email'] = 'Remote-Installer';
+		$user_info['id']    = 'Remote-Installer';
 		$payment            = -1;
 
 		if ( $price > 0 ) {

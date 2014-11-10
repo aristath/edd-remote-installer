@@ -1,9 +1,9 @@
 <?php
 
 /**
-* The EDD Deployer admin page
+* The EDD Remote Installer admin page
 */
-class EDD_Deploy_Admin {
+class EDD_RI_Admin {
 
 	function __construct() {
 
@@ -17,31 +17,31 @@ class EDD_Deploy_Admin {
 	/**
 	 * Create the admin menu
 	 */
-	function add_admin_menu() { 
-		add_options_page( 'EDD Deployer', 'EDD Deployer', 'manage_options', 'edd_deployer', array( $this, 'options_page' ) );
+	function add_admin_menu() {
+		add_options_page( 'EDD Remote Installer', 'EDD Remote Installer', 'manage_options', 'edd_ri', array( $this, 'options_page' ) );
 	}
 
 	/**
 	 * Initialize settings
 	 */
-	function settings_init() { 
+	function settings_init() {
 
-		register_setting( 'edd_deploy_settings', 'edd_deploy_settings' );
+		register_setting( 'edd_ri_settings', 'edd_ri_settings' );
 
-		add_settings_section( 'edd_deploy', __( 'EDD Deployer Settings', 'edd_deploy' ), array( $this, 'callback' ), 'edd_deploy_settings' );
-		add_settings_field( 'edd_deploy_enable', __( 'Enable/Disable the json feed', 'edd_deploy' ), array( $this, 'enable_render' ), 'edd_deploy_settings', 'edd_deploy' );
-		add_settings_field( 'edd_deploy_plugins_select', __( 'Select plugins category', 'edd_deploy' ), array( $this, 'plugins_select_render' ), 'edd_deploy_settings', 'edd_deploy' );
-		add_settings_field( 'edd_deploy_themes_select', __( 'Select themes category', 'edd_deploy' ), array( $this, 'themes_select_render' ), 'edd_deploy_settings', 'edd_deploy' );
+		add_settings_section( 'edd_ri', __( 'EDD Remote Installer Settings', 'edd_ri' ), array( $this, 'callback' ), 'edd_ri_settings' );
+		add_settings_field( 'edd_ri_enable', __( 'Enable/Disable the json feed', 'edd_ri' ), array( $this, 'enable_render' ), 'edd_ri_settings', 'edd_ri' );
+		add_settings_field( 'edd_ri_plugins_select', __( 'Select plugins category', 'edd_ri' ), array( $this, 'plugins_select_render' ), 'edd_ri_settings', 'edd_ri' );
+		add_settings_field( 'edd_ri_themes_select', __( 'Select themes category', 'edd_ri' ), array( $this, 'themes_select_render' ), 'edd_ri_settings', 'edd_ri' );
 
 	}
 
 	/**
 	 * Render the enable/disable control
 	 */
-	function enable_render() { 
+	function enable_render() {
 
-		$options = get_option( 'edd_deploy_settings' );	?>
-		<input type='checkbox' name='edd_deploy_settings[edd_deploy_enable]' <?php checked( $options['edd_deploy_enable'], 1 ); ?> value='1'>
+		$options = get_option( 'edd_ri_settings' ); ?>
+		<input type='checkbox' name='edd_ri_settings[edd_ri_enable]' <?php checked( $options['edd_ri_enable'], 1 ); ?> value='1'>
 		<?php
 
 	}
@@ -49,16 +49,16 @@ class EDD_Deploy_Admin {
 	/**
 	 * Render the plugin category selection dropdown
 	 */
-	function plugins_select_render() { 
+	function plugins_select_render() {
 
-		$options = get_option( 'edd_deploy_settings' );
+		$options = get_option( 'edd_ri_settings' );
 		$terms   = get_terms( 'download_category', $terms_args );
 		?>
 
-		<select name="edd_deploy_settings[edd_deploy_plugins_select]">
-		
+		<select name="edd_ri_settings[edd_ri_plugins_select]">
+
 			<?php foreach ( $terms as $term ) : ?>
-				<option value="<?php echo $term->term_id; ?>" <?php selected( $options['edd_deploy_plugins_select'], $term->term_id ); ?>><?php echo $term->name; ?></option>
+				<option value="<?php echo $term->term_id; ?>" <?php selected( $options['edd_ri_plugins_select'], $term->term_id ); ?>><?php echo $term->name; ?></option>
 			<?php endforeach; ?>
 
 		</select>
@@ -70,16 +70,16 @@ class EDD_Deploy_Admin {
 	/**
 	 * Render the plugin category selection dropdown
 	 */
-	function themes_select_render() { 
+	function themes_select_render() {
 
-		$options = get_option( 'edd_deploy_settings' );
+		$options = get_option( 'edd_ri_settings' );
 		$terms   = get_terms( 'download_category', $terms_args );
 		?>
 
-		<select name="edd_deploy_settings[edd_deploy_themes_select]">
-		
+		<select name="edd_ri_settings[edd_ri_themes_select]">
+
 			<?php foreach ( $terms as $term ) : ?>
-				<option value="<?php echo $term->term_id; ?>" <?php selected( $options['edd_deploy_themes_select'], $term->term_id ); ?>><?php echo $term->name; ?></option>
+				<option value="<?php echo $term->term_id; ?>" <?php selected( $options['edd_ri_themes_select'], $term->term_id ); ?>><?php echo $term->name; ?></option>
 			<?php endforeach; ?>
 
 		</select>
@@ -91,26 +91,26 @@ class EDD_Deploy_Admin {
 	/**
 	 * Add the description
 	 */
-	function callback() { 
-		_e( 'Below you can edit your settings for EDD-Deployer. By selecting a category for plugins and themes you\'re limiting the products that will be displayed to clients. This is a necessary step if you\'re selling both plugins and themes so that themes can use the theme installer instead of the plugin installer.', 'edd_deploy' );
+	function callback() {
+		_e( 'Below you can edit your settings for EDD Remote Installer. By selecting a category for plugins and themes you\'re limiting the products that will be displayed to clients. This is a necessary step if you\'re selling both plugins and themes so that themes can use the theme installer instead of the plugin installer.', 'edd_ri' );
 	}
 
 	/**
 	 * Create the page content
 	 */
-	function options_page() { 
+	function options_page() {
 
 		?>
 		<form action='options.php' method='post'>
-			
-			<h2><?php _e( 'EDD Deployer', 'edd_deploy' ); ?></h2>
-			
+
+			<h2><?php _e( 'EDD Remote Installer', 'edd_ri' ); ?></h2>
+
 			<?php
-			settings_fields( 'edd_deploy_settings' );
-			do_settings_sections( 'edd_deploy_settings' );
+			settings_fields( 'edd_ri_settings' );
+			do_settings_sections( 'edd_ri_settings' );
 			submit_button();
 			?>
-			
+
 		</form>
 		<?php
 

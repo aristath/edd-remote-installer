@@ -8,9 +8,8 @@ class EDD_RI_Client {
 
 		$this->api_url = trailingslashit( $store_url );
 
-		add_action( 'plugins_api',                  array( $this, 'plugins_api' ), 99, 3 );
+		add_action( 'plugins_api', array( $this, 'plugins_api' ), 99, 3 );
 		add_action( 'wp_ajax_edd_ri_install', array( $this, 'install') );
-		add_thickbox();
 
 		include( dirname( __FILE__ ) . '/class-EDD_RI_Client_Admin.php' );
 		$admin_page = new EDD_RI_Client_Admin( $this->api_url );

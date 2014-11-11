@@ -6,12 +6,14 @@ class EDD_RI_Client_Admin extends EDD_RI_Client {
 
 	function __construct( $store_url ) {
 
+		if ( ! is_admin() ) {
+			return;
+		}
+
 		$this->api_url = trailingslashit( $store_url );
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
 		add_action( 'admin_menu',   array( $this, 'admin_menu' ) );
-
-		add_thickbox();
 
 	}
 
@@ -27,6 +29,8 @@ class EDD_RI_Client_Admin extends EDD_RI_Client {
 
 		wp_register_style( 'edd_ri_css', EDD_RI_PLUGIN_URL . 'assets/css/style.css', false );
         wp_enqueue_style( 'edd_ri_css' );
+
+		add_thickbox();
 
 	}
 

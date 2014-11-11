@@ -36,16 +36,31 @@ class EDD_RI_Client_Admin extends EDD_RI_Client {
 
 	function get_downloads() {
 
-		$api_params = array( 'edd_action' => 'get_downloads' );
-		$request    = wp_remote_post( $this->api_url . '/?edd_action=get_downloads' );
+		$domain = parse_url( $this->api_url );
+		$domain = str_replace( '.', '', $domain['host'] );
 
-		if ( is_wp_error( $request ) ) {
-			return;
+		// Get the cache from the transient.
+		$cache = get_transient( 'remote_installer_' . $domain );
+
+		// If the cache does not exist, get the json and save it as a transient.
+		if ( ! $cache ) {
+
+			$api_params = array( 'edd_action' => 'get_downloads' );
+			$request    = wp_remote_post( $this->api_url . '/?edd_action=get_downloads' );
+
+			if ( is_wp_error( $request ) ) {
+				return;
+			}
+
+			$request = json_decode( wp_remote_retrieve_body( $request ), true );
+
+			set_transient( 'remote_installer_' . $domain, $request, 60 * 60 );
+
+			$cache = $request;
+
 		}
 
-		$request = json_decode( wp_remote_retrieve_body( $request ), true );
-
-		return $request;
+		return $cache;
 
 	}
 

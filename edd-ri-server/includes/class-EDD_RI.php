@@ -20,9 +20,15 @@ class EDD_RI {
 
 	function runner() {
 
+		$settings = get_option( 'edd_ri_settings' );
+
 		add_action( 'edd_check_download', array( $this, 'check_download' ) );
 		add_action( 'edd_get_download',   array( $this, 'get_download' ) );
-		add_action( 'edd_get_downloads',  array( $this, 'get_downloads' ) );
+
+		// Only add the edd_get_downloads action if we're allowing it in the plugin options
+		if ( 1 == $settings['edd_ri_enable'] ) {
+			add_action( 'edd_get_downloads',  array( $this, 'get_downloads' ) );
+		}
 
 	}
 

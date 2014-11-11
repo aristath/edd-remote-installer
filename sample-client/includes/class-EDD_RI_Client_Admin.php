@@ -128,6 +128,7 @@ class EDD_RI_Client_Admin extends EDD_RI_Client {
 					<button style="margin-top: 10px" type="submit" class="button button-primary"><?php _e( 'Submit', 'edd_ri' ); ?></button>
 				</form>
 			</div>
+			<div class="message-popup" id="MessagePopup" style="display:none;"></div>
 		</div>
 		<?php
 

@@ -23,9 +23,11 @@ jQuery(function ($) {
                         $spinner.hide();
                         if( res.success === false ){
                             $this.attr("disabled", false);
-                            alert(res.data);
+                            $('.message-popup').html(res.data);
+                            tb_show("", "#TB_inline?width=400&height=450&inlineId=MessagePopup");
                         }else{
-                            alert(res);
+                            $('.message-popup').html(res);
+                            tb_show("", "#TB_inline?width=400&height=450&inlineId=MessagePopup");
                             $this.text("Installed");
                         }
 

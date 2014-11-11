@@ -52,7 +52,7 @@ class EDD_RI_Admin {
 	function plugins_select_render() {
 
 		$options = get_option( 'edd_ri_settings' );
-		$terms   = get_terms( 'download_category', $terms_args );
+		$terms   = get_terms( 'download_category' );
 		?>
 
 		<select name="edd_ri_settings[edd_ri_plugins_select]">
@@ -73,7 +73,7 @@ class EDD_RI_Admin {
 	function themes_select_render() {
 
 		$options = get_option( 'edd_ri_settings' );
-		$terms   = get_terms( 'download_category', $terms_args );
+		$terms   = get_terms( 'download_category' );
 		?>
 
 		<select name="edd_ri_settings[edd_ri_themes_select]">

@@ -8,7 +8,7 @@ class EDD_RI_Client_Admin extends EDD_RI_Client {
 
 		$this->api_url = trailingslashit( $store_url );
 
-		// add_action( 'admin_footer', array( $this, 'register_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
 		add_action( 'admin_menu',   array( $this, 'admin_menu' ) );
 
 		add_thickbox();
@@ -22,7 +22,8 @@ class EDD_RI_Client_Admin extends EDD_RI_Client {
 
 	public function register_scripts() {
 
-		wp_enqueue_script( 'edd_ri_script', EDD_RI_PLUGIN_URL . 'assets/js/edd-ri.js', array( 'jquery' ) );
+		wp_register_script( 'edd_ri_script', EDD_RI_PLUGIN_URL . 'assets/js/edd-ri.js', array( 'jquery' ) );
+		wp_enqueue_script( 'edd_ri_script' );
 
 		wp_register_style( 'edd_ri_css', EDD_RI_PLUGIN_URL . 'assets/css/style.css', false );
         wp_enqueue_style( 'edd_ri_css' );

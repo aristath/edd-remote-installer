@@ -51,7 +51,7 @@ class EDD_RI_Client_Admin extends EDD_RI_Client {
 
 	function settings_page() {
 
-		echo '<div class="wrap">';
+		echo '<div class="wrap metabox-holder">';
 		echo '<h2>' . __( 'EDD Remote Installer', 'edd_ri' ) . '</h2>';
 
 		$downloads = $this->get_downloads();

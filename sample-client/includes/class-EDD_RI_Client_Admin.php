@@ -64,68 +64,72 @@ class EDD_RI_Client_Admin extends EDD_RI_Client {
 
 	}
 
-	function settings_page() {
+	function settings_page() { ?>
 
-		echo '<div class="wrap metabox-holder">';
-		echo '<h2>' . __( 'EDD Remote Installer', 'edd_ri' ) . '</h2>';
+		<div class="wrap metabox-holder">
+			<h2><?php _e( 'EDD Remote Installer', 'edd_ri' ); ?></h2>
 
-		$downloads = $this->get_downloads();
+			<?php
+			$downloads = $this->get_downloads();
 
-		$i = 0;
+			$i = 0;
 
-		$plugins = $downloads['plugins'];
-		$themes  = $downloads['themes'];
+			$plugins = $downloads['plugins'];
+			$themes  = $downloads['themes'];
+			?>
 
-		foreach ( $plugins as $download ) {
+			<?php foreach ( $plugins as $download ) : ?>
 
-			if ( ! $download['bundle'] ) {
+				<?php if ( ! $download['bundle'] ) : ?>
 
-				$data_free   = (int) $download['free'];
-				$disabled    = $this->is_plugin_installed( $download['title'] ) ? ' disabled="disabled" ' : '';
-				$button_text = $this->is_plugin_installed( $download['title'] ) ? __( 'Installed', 'edd_ri' ) : __( 'Install', 'edd_ri' );
+					<?php
+					$data_free   = (int) $download['free'];
+					$disabled    = $this->is_plugin_installed( $download['title'] ) ? ' disabled="disabled" ' : '';
+					$button_text = $this->is_plugin_installed( $download['title'] ) ? __( 'Installed', 'edd_ri' ) : __( 'Install', 'edd_ri' );
 
-				$i = $i == 3 ? 0 : $i;
-				if ( $i == 0 ) {
-					echo '<div style="clear:both; display: block; float: none;"></div>';
-				}
+					$i = $i == 3 ? 0 : $i;
+					?>
 
-				echo '<div id="' . sanitize_title( $download['title'] ) . '" class="edd-ri-item postbox plugin">';
-					echo '<h3 class="hndle"><span>' . $download['title'] . '</span></h3>';
-					echo '<div class="inside">';
-						echo '<div class="main">';
+					<?php if ( $i == 0 ) : ?>
+						<div style="clear:both; display: block; float: none;"></div>
+					<?php endif; ?>
 
-							if ( '' != $download['thumbnail'] ) {
-								echo '<img class="edd-ri-item-image" src="' . $download['thumbnail'][0] . '">';
-							}
+					<div id="<?php echo sanitize_title( $download['title'] ); ?>" class="edd-ri-item postbox plugin">
+						<h3 class="hndle"><span><?php echo $download['title']; ?></span></h3>
+						<div class="inside">
+							<div class="main">
+								<?php if ( '' != $download['thumbnail'] ) : ?>
+									<img class="edd-ri-item-image" src="<?php echo $download['thumbnail'][0]; ?>">
+								<?php endif; ?>
 
-							if ( '' != $download['description'] ) {
-								echo '<p class="edd-ri-item-description">' . $download['description'] . '</p>';
-							}
+								<?php if ( '' != $download['description'] ) : ?>
+									<p class="edd-ri-item-description"><?php echo $download['description']; ?></p>
+								<?php endif; ?>
 
-							echo '<p class="edd-ri-actions">';
-								echo '<span class="spinner"></span>';
-								echo '<button class="button button-primary" data-free="' . $data_free . '"' . $disabled . 'data-edd-ri="' . $download['title'] . '">' . $button_text . '</button>';
-								echo ' <a class="button" target="_blank" href="' . trailingslashit( $this->api_url ) . '?p=' . $download['id'] . '">' . __( 'Details', 'edd_ri' ) . '</a>';
-							echo '</p>';
-						echo '</div>';
-					echo '</div>';
-				echo '</div>';
+								<p class="edd-ri-actions">
+									<span class="spinner"></span>
+									<button class="button button-primary" data-free="<?php echo $data_free; ?>"<?php echo $disabled; ?> data-edd-ri="<?php echo $download['title']; ?>"><?php echo $button_text; ?></button>
+									<a class="button" target="_blank" href="<?php echo trailingslashit( $this->api_url ) . '?p=' . $download['id']; ?>"><?php _e( 'Details', 'edd_ri' ); ?></a>
+								</p>
+							</div>
+						</div>
+					</div>
 
-				$i++;
+					<?php $i++; ?>
 
-			}
+				<?php endif; ?>
 
-		}
+			<?php endforeach; ?>
 
-		echo '<div id="edd_ri_license_thickbox" style="display:none;">';
-		echo '<h3>' . __( 'Enter your license', 'edd_ri' ) . '</h3>';
-		echo '<form action="" method="post" id="edd_ri_license_form">';
-		echo '<input style="width: 100%" type="text" id="edd_ri_license"/>';
-		echo '<button style="margin-top: 10px" type="submit" class="button button-primary">' . __( 'Submit', 'edd_ri' ) . '</button>';
-		echo '</form>';
-		echo '</div>';
-
-		echo '</div>';
+			<div id="edd_ri_license_thickbox" style="display:none;">
+				<h3><?php _e( 'Enter your license', 'edd_ri' ); ?></h3>
+				<form action="" method="post" id="edd_ri_license_form">
+					<input style="width: 100%" type="text" id="edd_ri_license"/>
+					<button style="margin-top: 10px" type="submit" class="button button-primary"><?php _e( 'Submit', 'edd_ri' ); ?></button>
+				</form>
+			</div>
+		</div>
+		<?php
 
 	}
 }

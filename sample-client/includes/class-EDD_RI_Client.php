@@ -1,6 +1,6 @@
 <?php
 
-class EDD_Deploy_Client {
+class EDD_RI_Client {
 
 	private $api_url;
 
@@ -9,11 +9,11 @@ class EDD_Deploy_Client {
 		$this->api_url = trailingslashit( $store_url );
 
 		add_action( 'plugins_api',                  array( $this, 'plugins_api' ), 99, 3 );
-		add_action( 'wp_ajax_edd_deployer_install', array( $this, 'install') );
+		add_action( 'wp_ajax_edd_ri_install', array( $this, 'install') );
 		add_thickbox();
 
-		include( dirname( __FILE__ ) . '/class-EDD_Deploy_Client_Admin.php' );
-		$admin_page = new EDD_Deploy_Client_Admin( $this->api_url );
+		include( dirname( __FILE__ ) . '/class-EDD_RI_Client_Admin.php' );
+		$admin_page = new EDD_RI_Client_Admin( $this->api_url );
 
 	}
 
@@ -37,7 +37,7 @@ class EDD_Deploy_Client {
 
 		if ( 'plugin_information' == $action ) {
 
-			if ( isset( $_POST['edd_deploy'] ) ) {
+			if ( isset( $_POST['edd_ri'] ) ) {
 
 				$api_params = array(
 					'edd_action' => 'get_download',
@@ -68,7 +68,7 @@ class EDD_Deploy_Client {
 
 		$download = $_POST['download'];
 		$license  = $_POST['license'];
-		$message  = __( 'An Error Occured', 'edd_deploy' );
+		$message  = __( 'An Error Occured', 'edd_ri' );
 		$download_type = $this->_check_download($download);
 
 		/**
@@ -93,7 +93,7 @@ class EDD_Deploy_Client {
 			$installed = $this->_install_plugin( $download, $license );
 			wp_send_json_success( $installed );
 		} else {
-			wp_send_json_error( __( 'Invalid License', 'edd_deploy' ) );
+			wp_send_json_error( __( 'Invalid License', 'edd_ri' ) );
 		}
 
 
@@ -167,7 +167,7 @@ class EDD_Deploy_Client {
 		// Check the user's capabilities before proceeding
 		$this->check_capabilities();
 
-		if ( $this->is_plugin_installed( $download ) ) die( json_encode( __( 'Already Installed', 'edd_deploy' ) ) );
+		if ( $this->is_plugin_installed( $download ) ) die( json_encode( __( 'Already Installed', 'edd_ri' ) ) );
 
 		$api_params = array(
 			'edd_action' => 'check_download',

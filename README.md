@@ -1,4 +1,4 @@
-EDD-Deployer
+EDD Remote Installer
 ============
 
 Remotely install plugins and themes. The package consists of a plugin that has to be installed on a server running EDD (and optionally EDD-SL) and a demo plugin for the client sites.
@@ -20,13 +20,13 @@ This will allow you to limit the products that will be available for remote inst
 
 ### Client-side
 
-The client is located on this folder in the plugin: https://github.com/aristath/EDD-Deployer/tree/master/client-plugin
+The client is located on this folder in the plugin: https://github.com/aristath/edd-remote-installer/tree/master/client-plugin
 
 You will have to bundle it separately since this is the plugin you'll be distributing.
 It only requires 1 line to instantianate it:
 
 ```php
-<?php new EDD_Deploy_Client( 'http://domain.com' ); ?>
+<?php new EDD_RI_Client( 'http://domain.com' ); ?>
 ```
 This will use the `get_downloads` action from the server to get a list of all our available projects.
 

@@ -1,10 +1,9 @@
 <?php
-
 /*
 Plugin Name: EDD - Remote Installer Client
 Plugin URL: http://press.codes
 Description: Allows remote installation of WordPress plugins and themes
-Version: 1.0-alpha1
+Version: 1.1-alpha2
 Author: Aristeides Stathopoulos
 Author URI: http://aristeides.com
 */

@@ -33,7 +33,7 @@ class EDD_RI {
 	 * @return  EDD_RI
 	 */
 	public static function init() {
-		if ( ! class_exists( 'Easy_Digital_Downloads' )  ) {
+		if ( ! class_exists( 'Easy_Digital_Downloads' ) ) {
 			if ( ! class_exists( 'EDD_Extension_Activation' ) ) {
 				require_once __DIR__ . '/class-EDD_Extension_Activation.php';
 			}
@@ -60,11 +60,13 @@ class EDD_RI {
 	 */
 	public function load_admin() {
 
-		if ( ! class_exists( 'EDD_RI_Admin', false ) ) {
-			require( __DIR__ . '/class-EDD_RI_Admin.php' );
-		}
+		if ( is_admin() ) {
+			if ( ! class_exists( 'EDD_RI_Admin', false ) ) {
+				require( __DIR__ . '/class-EDD_RI_Admin.php' );
+			}
 
-		EDD_RI_Admin::init();
+			EDD_RI_Admin::init();
+		}
 	}
 
 	/**
@@ -75,88 +77,97 @@ class EDD_RI {
 	public function get_downloads( array $_post ) {
 
 		if ( ! stristr( $_SERVER[ 'HTTP_USER_AGENT' ], 'EDD_RI' ) || 1 != self::get_option( 'edd_ri_enable' ) ) {
-			wp_send_json_error( 'illegal api call' );
+			wp_send_json_error( __( 'Illegal api call', 'edd_ri' ) );
 		}
 
 		$allowed = array(
 			'taxonomy' => array(
 				'download_category',
-				'download_tag'
+				'download_tag',
 			),
-		    'terms'
+			'terms',
 		);
 
 		$data = array_map( 'sanitize_text_field', $_post );
 
 		$downloads = array();
 
-		$use_tags = (bool) self::get_option( 'edd_ri_download_tags_enable' );
-		$taxonomy = $use_tags ? 'download_tag' : 'download_category';
+		$use_tags    = (bool) self::get_option( 'edd_ri_download_tags_enable' );
+		$taxonomy    = $use_tags ? 'download_tag' : 'download_category';
 
-		$plugins_query_args = array(
-			'post_type'      => 'download',
-			'posts_per_page' => - 1,
-			'tax_query'      => array(
-				array(
-					'taxonomy' => $taxonomy,
-					'field'    => 'term_id',
-					'terms'    => self::get_option( 'edd_ri_plugins_select' ),
+		if ( '-' !== ( $plugin_term = self::get_option( 'edd_ri_plugins_select', '-' ) ) ) {
+
+			$plugins_query_args = array(
+				'post_type'      => 'download',
+				'posts_per_page' => - 1,
+				'tax_query'      => array(
+					array(
+						'taxonomy' => $taxonomy,
+						'field'    => 'term_id',
+						'terms'    => $plugin_term,
+					),
 				),
-			),
-		);
+			);
 
-		$plugins = get_posts( $plugins_query_args );
+			$plugins = get_posts( $plugins_query_args );
 
-		if ( ! empty( $plugins ) ) {
-			foreach ( $plugins as $plugin ) {
+			if ( ! empty( $plugins ) ) {
+				foreach ( $plugins as $plugin ) {
 
-				$downloads[ 'plugins' ][] = array(
-					'id'          => $plugin->ID,
-					'title'       => $plugin->post_title,
-					'description' => $plugin->post_excerpt,
-					'bundle'      => edd_is_bundled_product( $plugin->ID ) ? 1 : 0,
-					'price'       => edd_price( $plugin->ID, false ),
-					'free'        => 0 != $this->edd_price( $plugin->ID ) ? 0 : 1,
-					'thumbnail'   => wp_get_attachment_image_src( get_post_thumbnail_id( $plugin->ID ), 'full' ),
-				);
+					$downloads[ 'plugins' ][] = array(
+						'id'          => $plugin->ID,
+						'title'       => $plugin->post_title,
+						'description' => $plugin->post_excerpt,
+						'bundle'      => edd_is_bundled_product( $plugin->ID ) ? 1 : 0,
+						'price'       => edd_price( $plugin->ID, false ),
+						'free'        => 0 != $this->edd_price( $plugin->ID ) ? 0 : 1,
+						'thumbnail'   => wp_get_attachment_image_src( get_post_thumbnail_id( $plugin->ID ), 'full' ),
+					);
+				}
 			}
+
+			wp_reset_postdata();
 		}
 
-		wp_reset_postdata();
+		if ( '-' !== ( $theme_term = self::get_option( 'edd_ri_themes_select', '-' ) ) ) {
 
-		$themes_query_args = array(
-			'post_type'      => 'download',
-			'posts_per_page' => - 1,
-			'tax_query'      => array(
-				array(
-					'taxonomy' => $taxonomy,
-					'field'    => 'term_id',
-					'terms'    => self::get_option( 'edd_ri_themes_select' ),
+			$themes_query_args = array(
+				'post_type'      => 'download',
+				'posts_per_page' => - 1,
+				'tax_query'      => array(
+					array(
+						'taxonomy' => $taxonomy,
+						'field'    => 'term_id',
+						'terms'    => $theme_term,
+					),
 				),
-			),
-		);
+			);
 
-		$themes = get_posts( $themes_query_args );
+			$themes = get_posts( $themes_query_args );
 
-		if ( ! empty( $themes ) ) {
-			foreach ( $themes as $theme ) {
+			if ( ! empty( $themes ) ) {
+				foreach ( $themes as $theme ) {
 
-				$downloads[ 'themes' ][] = array(
-					'id'          => $theme->ID,
-					'title'       => $theme->post_title,
-					'description' => $theme->post_excerpt,
-					'bundle'      => edd_is_bundled_product( $theme->ID ) ? 1 : 0,
-					'price'       => edd_price( $theme->ID, false ),
-					'free'        => 0 != $this->edd_price( $theme->ID ) ? 0 : 1,
-					'thumbnail'   => wp_get_attachment_image_src( get_post_thumbnail_id( $theme->ID ), 'full' ),
-				);
+					$downloads[ 'themes' ][] = array(
+						'id'          => $theme->ID,
+						'title'       => $theme->post_title,
+						'description' => $theme->post_excerpt,
+						'bundle'      => edd_is_bundled_product( $theme->ID ) ? 1 : 0,
+						'price'       => edd_price( $theme->ID, false ),
+						'free'        => 0 != $this->edd_price( $theme->ID ) ? 0 : 1,
+						'thumbnail'   => wp_get_attachment_image_src( get_post_thumbnail_id( $theme->ID ), 'full' ),
+					);
+				}
 			}
+
+			wp_reset_postdata();
 		}
 
-		wp_reset_postdata();
+		if ( empty( $downloads ) ) {
+			wp_send_json_error( __( 'No downloads found.', 'edd_ri' ) );
+		}
 
-		echo wp_json_encode( $downloads );
-		exit;
+		die( wp_json_encode( $downloads ) );
 	}
 
 	/**
@@ -239,8 +250,8 @@ class EDD_RI {
 
 		$args[ 'item_name' ] = $item_name;
 		$download_object     = get_page_by_title( $item_name, OBJECT, 'download' );
-		$download            = $download_object->ID;
-		$price               = $this->edd_price( $download );
+		$download_id         = $download_object->ID;
+		$price               = $this->edd_price( $download_id );
 
 		$user_info = array();
 
@@ -254,13 +265,13 @@ class EDD_RI {
 			$edd_sl        = function_exists( ' edd_software_licensing' ) ? edd_software_licensing() : false;
 
 			if ( false === $edd_sl ) {
-				return false;
+				die( 'error' );
 			}
 
 			$status = $edd_sl->check_license( $args );
 
 			if ( 'valid' != $status ) {
-				return $status;
+				die( $status );
 			}
 
 			$license_id = $edd_sl->get_license_by_key( $args[ 'key' ] );
@@ -268,13 +279,13 @@ class EDD_RI {
 			$user_info  = edd_get_payment_meta_user_info( $payment_id );
 		}
 
-		$download_files = edd_get_download_files( $download );
+		$download_files = edd_get_download_files( $download_id );
 
-		$file = apply_filters( 'edd_requested_file', $download_files[ 0 ][ 'file' ], $download_files, $key );
+		$file = apply_filters( 'edd_requested_file', $download_files[ 0 ][ 'file' ], $download_files, '' );
 
 		$this->build_file( $file );
 
-		edd_record_download_in_log( $download, $key, $user_info, edd_get_ip(), $payment );
+		edd_record_download_in_log( $download_id, '', $user_info, edd_get_ip(), $payment );
 		exit;
 	}
 

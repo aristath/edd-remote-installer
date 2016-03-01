@@ -1,12 +1,15 @@
 <?php
 /**
  * Plugin Name: EDD - Remote Installer
- * Plugin URL: http://press.codes
+ * Plugin URL: https://github.com/aristath/edd-remote-installer
  * Description: Allows remote installation of WordPress plugins and themes
- * Version: 2.0.0-beta
+ * Version: 2.0.1-beta
  * Author: Aristeides Stathopoulos
  * Author URI: http://aristeides.com
  * Contributors: aristath, austyfrosty
+ * Text Domain: edd_ri
+ * GitHub Plugin URI: https://github.com/aristath/edd-remote-installer
+ * GitHub Branch: master
  */
 
 // Exit if accessed directly
@@ -17,7 +20,7 @@ if ( ! defined( 'EDD_RI_PLUGIN_URL' ) ) {
 }
 
 if ( ! defined( 'EDD_RI_VERSION' ) ) {
-	define( 'EDD_RI_VERSION', '2.0.0' );
+	define( 'EDD_RI_VERSION', '2.0.1' );
 }
 
 if ( ! class_exists( 'EDD_RI_Client', false ) ) {

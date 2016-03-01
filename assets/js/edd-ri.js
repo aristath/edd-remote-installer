@@ -5,6 +5,7 @@ jQuery(function ($) {
         api_url = '-' != $edd_api.children('option:selected').val() ?
             $edd_api.children('option:selected').val() : edd_ri.default_api_url,
         $wrapper = $('div#edd-ri-wrapper-inner'),
+        $message = $('ul li.edd-ri-message > span'),
         data;
 
     $('div#edd-ri-wrapper').css("height", $(document).height());
@@ -18,11 +19,13 @@ jQuery(function ($) {
         dataType: "text",
         success: function (data) {
 
-            //data downloaded so we call parseJSON function
-            //and pass downloaded data
+            /**
+             * data downloaded so we call parseJSON function
+             * and pass downloaded data
+             */
             var json = $.parseJSON(data);
 
-            $.each(json.api_urls, function(value, text){
+            $.each(json.api_urls, function (value, text) {
                 $edd_api.append($('<option>').text(text).attr('value', value));
             });
         }
@@ -58,6 +61,9 @@ jQuery(function ($) {
                     type: "post",
                     url: ajaxurl,
                     data: data,
+                    beforeSend: function () {
+                        $message.fadeIn().empty();
+                    },
                     success: function (res) {
 
                         if (res.success !== false) {
@@ -68,10 +74,16 @@ jQuery(function ($) {
                             }
                         } else {
                             $spinner.hide();
+                            $message.fadeIn('slow').html(res.data);
                             $wrapper.children('.section').fadeIn();
                         }
                     },
                     error: function () {
+                    },
+                    complete: function () {
+                        setTimeout(function () {
+                            $message.fadeOut(2000);
+                        }, 5500);
                     }
                 });
             };
@@ -101,6 +113,8 @@ jQuery(function ($) {
                     type: "post",
                     url: ajaxurl,
                     data: data,
+                    beforeSend: function() {
+                    },
                     success: function (res) {
 
                         $spinner.hide();
@@ -111,12 +125,11 @@ jQuery(function ($) {
                         } else {
                             $('.message-popup').html(res);
                             tb_show("", "#TB_inline?width=400&height=450&inlineId=MessagePopup");
-                            $this.text("Installed");
+                            //$this.text("Installed");
                         }
 
                     },
                     error: function () {
-                        console.log("erere");
                         $this.attr("disabled", false);
                     }
                 });

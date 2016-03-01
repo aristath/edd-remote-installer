@@ -10,7 +10,7 @@ class EDD_RI_Client {
 	private static $instance;
 
 	/**
-	 * @return EDD_RI
+	 * @return EDD_RI_Client
 	 */
 	public static function get_instance() {
 
@@ -26,7 +26,6 @@ class EDD_RI_Client {
 	 */
 	public static function init() {
 
-		define( 'EDD_RI_IS_SERVER', true );
 		add_action( 'init', array( self::get_instance(), 'client_admin' ) );
 		add_action( 'plugins_loaded', array( self::get_instance(), 'server_admin' ), 10 );
 		add_action( 'plugins_api', array( self::get_instance(), 'plugins_api' ), 99, 3 );
@@ -55,7 +54,7 @@ class EDD_RI_Client {
 
 		if ( defined( 'EDD_RI_IS_SERVER' ) && EDD_RI_IS_SERVER ) {
 			if ( ! class_exists( 'EDD_RI', false ) ) {
-				require( dirname( __DIR__ ) . '/includes/server/class-EDD_RI.php' );
+				require( __DIR__ . '/server/class-EDD_RI.php' );
 			}
 
 			EDD_RI::init();

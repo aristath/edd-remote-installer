@@ -102,7 +102,7 @@ class EDD_RI_Client_Admin {
 		 */
 		if ( 'free' === $download_type ) {
 			$installed = $this->_install_plugin( $download, "", $api_url );
-			wp_send_json_success( $installed );
+			die( json_encode( $installed ) );
 		}
 
 		/**
@@ -110,9 +110,9 @@ class EDD_RI_Client_Admin {
 		 */
 		if ( $this->_check_license( $license, $download, $api_url ) ) {
 			$installed = $this->_install_plugin( $download, $license, $api_url );
-			wp_send_json_success( $installed );
+			die( json_encode( $installed ) );
 		} else {
-			wp_send_json_error( __( 'Invalid License', 'edd_ri' ) );
+			die( json_encode( esc_html__( 'Invalid License', 'edd_ri' ) ) );
 		}
 	}
 
@@ -132,11 +132,10 @@ class EDD_RI_Client_Admin {
 		$downloads = $this->get_downloads( $data[ 'api_url' ] );
 
 		if ( is_array( $downloads ) ) {
-			$html = $this->get_downloads_html( $downloads[ 'plugins' ], $data[ 'api_url' ] );
-			$html .= $this->get_downloads_html( $downloads[ 'themes' ], $data[ 'api_url' ] );
+			$html = $this->get_downloads_html( $downloads, $data[ 'api_url' ] );
 			wp_send_json_success( $html );
 		} else {
-			wp_send_json_error();
+			wp_send_json_error( esc_html__( 'An error, occurred, please try again after one minute.', 'edd_ri' ) );
 		}
 	}
 
@@ -153,8 +152,9 @@ class EDD_RI_Client_Admin {
 
 		$api_args = array(
 			'edd_action' => 'activate_license',
-			'license'    => $license,
 			'item_name'  => urlencode( $download ),
+			'license'    => $license,
+			'url'        => home_url(),
 		);
 
 		// Get a response from our EDD server
@@ -190,9 +190,13 @@ class EDD_RI_Client_Admin {
 			'edd_action' => 'get_download',
 			'item_name'  => urlencode( $download ),
 			'license'    => $license,
+			'url'        => home_url(),
+			'expires'    => rawurlencode( base64_encode( strtotime( '+10 minutes' ) ) ),
 		);
 
 		$download_link = add_query_arg( $api_args, $api_url );
+
+		error_log( 'LINK: ' . print_r( $download_link, true ) );
 
 		if ( ! class_exists( 'Plugin_Upgrader' ) ) {
 			include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
@@ -288,6 +292,7 @@ class EDD_RI_Client_Admin {
 	 * @return mixed
 	 */
 	private function get_downloads( $api_url ) {
+		static $count = array();
 
 		$domain    = sanitize_key( $api_url );
 		$trans_key = $this->get_transient_key( $domain );
@@ -309,7 +314,15 @@ class EDD_RI_Client_Admin {
 			);
 
 			if ( is_wp_error( $response ) ) {
-				return '';
+				delete_transient( $trans_key );
+			}
+
+			if ( ! isset( $count[ $domain ][ 'count' ] ) ) {
+				$count[ $domain ] = array(
+					'count' => 0,
+				);
+			} else {
+				$count[ $domain ][ 'count' ] ++;
 			}
 
 			if ( isset( $response[ 'body' ] ) && strlen( $response[ 'body' ] ) > 0 ) {
@@ -322,7 +335,7 @@ class EDD_RI_Client_Admin {
 				 * response, but I chose to cache the call for a lesser time to avoid hitting the URL
 				 * to many times.
 				 */
-				$expiration = empty( $downloads ) ? DAY_IN_SECONDS : MONTH_IN_SECONDS;
+				$expiration = empty( $downloads ) ? MINUTE_IN_SECONDS : MONTH_IN_SECONDS;
 				set_transient( $trans_key, $downloads, $expiration );
 			}
 		}
@@ -342,54 +355,57 @@ class EDD_RI_Client_Admin {
 
 		ob_start();
 
-		$i = 1;
-
 		if ( ! empty( $downloads ) ) {
 
-			foreach ( $downloads as $download ) {
+			foreach ( $downloads as $category ) {
 
-				if ( ! $download[ 'bundle' ] ) {
-					$data_free   = (int) $download[ 'free' ];
-					$disabled    = $this->is_plugin_installed( $download[ 'title' ] ) ?
-						' disabled="disabled" ' : '';
-					$button_text = $this->is_plugin_installed( $download[ 'title' ] ) ?
-						__( 'Installed', 'edd_ri' ) : __( 'Install', 'edd_ri' );
+				$i = 1;
 
-					echo $i % 3 == 1 ? '<div class="section group">' : '';
-					?>
-					<div id="<?php echo sanitize_title( $download[ 'title' ] ); ?>"
-					     class="col span_1_of_3 edd-ri-item postbox plugin">
-						<h3 class="hndle"><span><?php echo $download[ 'title' ]; ?></span></h3>
-						<div class="inside">
-							<div class="main">
-								<?php if ( '' != $download[ 'thumbnail' ] ) : ?>
-									<img class="edd-ri-item-image"
-									     src="<?php echo $download[ 'thumbnail' ][ 0 ]; ?>">
-								<?php endif; ?>
+				foreach ( $category as $download ) {
 
-								<?php if ( '' != $download[ 'description' ] ) : ?>
-									<p class="edd-ri-item-description"><?php echo $download[ 'description' ]; ?></p>
-								<?php endif; ?>
+					if ( ! $download[ 'bundle' ] ) {
+						$data_free   = (int) $download[ 'free' ];
+						$disabled    = $this->is_plugin_installed( $download[ 'title' ] ) ?
+							' disabled="disabled" ' : '';
+						$button_text = $this->is_plugin_installed( $download[ 'title' ] ) ?
+							__( 'Installed', 'edd_ri' ) : __( 'Install', 'edd_ri' );
 
-								<p class="edd-ri-actions">
-									<span class="spinner"></span>
-									<button class="button button-primary"
-									        data-free="<?php echo $data_free; ?>"<?php echo $disabled; ?>
-									        data-edd-ri="<?php echo $download[ 'title' ]; ?>">
-										<?php echo $button_text; ?></button>
-									<a class="button" target="_blank"
-									   href="<?php echo esc_url( add_query_arg( array( 'p' => $download[ 'id' ] ),
-										   $api_url ) ); ?>"><?php _e( 'Details', 'edd_ri' ); ?></a>
-								</p>
+						echo $i % 3 == 1 ? '<div class="section group">' : '';
+						?>
+						<div id="<?php echo sanitize_title( $download[ 'title' ] ); ?>"
+						     class="col span_1_of_3 edd-ri-item postbox plugin">
+							<h3 class="hndle"><span><?php echo $download[ 'title' ]; ?></span></h3>
+							<div class="inside">
+								<div class="main">
+									<?php if ( '' != $download[ 'thumbnail' ] ) : ?>
+										<img class="edd-ri-item-image"
+										     src="<?php echo $download[ 'thumbnail' ][ 0 ]; ?>">
+									<?php endif; ?>
+
+									<?php if ( '' != $download[ 'description' ] ) : ?>
+										<p class="edd-ri-item-description"><?php echo $download[ 'description' ]; ?></p>
+									<?php endif; ?>
+
+									<p class="edd-ri-actions">
+										<span class="spinner"></span>
+										<button class="button button-primary"
+										        data-free="<?php echo $data_free; ?>"<?php echo $disabled; ?>
+										        data-edd-ri="<?php echo $download[ 'title' ]; ?>">
+											<?php echo $button_text; ?></button>
+										<a class="button" target="_blank"
+										   href="<?php echo esc_url( add_query_arg( array( 'p' => $download[ 'id' ] ),
+											   $api_url ) ); ?>"><?php _e( 'Details', 'edd_ri' ); ?></a>
+									</p>
+								</div>
 							</div>
 						</div>
-					</div>
-					<?php
-					echo $i % 3 == 0 ? '</div>' : '';
-					$i ++;
+						<?php
+						echo $i % 3 == 0 ? '</div>' : '';
+						$i ++;
+					}
 				}
+				echo $i % 3 != 1 ? '</div>' : '';
 			}
-			echo $i % 3 != 1 ? '</div>' : '';
 		}
 
 		return ob_get_clean();

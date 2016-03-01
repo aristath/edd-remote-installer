@@ -4,7 +4,7 @@
 	<div class="wp-filter">
 		<form method="post" style="display: inline-block; margin: 10px 0">
 			<ul class="filter-links">
-				<li class="plugin-install-featured">
+				<li class="">
 					<div class="control">
                         <span class="select">
 						<select id="edd_ri_api_url">
@@ -13,6 +13,7 @@
 	                    </span>
 					</div>
 				</li>
+				<li class="edd-ri-message"><span></span></li>
 			</ul>
 		</form>
 

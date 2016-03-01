@@ -184,6 +184,15 @@ class EDD_RI_Admin {
 	 * @return array|int|WP_Error
 	 */
 	private function get_download_terms( $term = 'download_category' ) {
-		return get_terms( $term );
+
+		$select = new stdClass();
+		$select->term_id = '-';
+		$select->name = esc_attr__( 'None', 'edd_ri' );
+
+		$terms = get_terms( $term );
+
+		array_unshift( $terms, $select );
+
+		return $terms;
 	}
 }

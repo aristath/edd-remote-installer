@@ -1,0 +1,75 @@
+#edd-ri-wrapper {
+    display: block;
+    min-height: 800px;
+}
+
+#edd-ri-wrapper img#edd-ri-loading {
+    position: absolute;
+    top: 0; bottom:0; left: 0; right:0;
+    margin: auto;
+    width: 20px;
+}
+
+.edd-ri-item {
+    border: 0;
+}
+
+.metabox-holder .edd-ri-item h3 {
+    font-size: 16px;
+}
+
+.edd-ri-item img {
+    width: 100%;
+    height: auto;
+}
+
+/*  SECTIONS  */
+.section {
+    clear: both;
+    padding: 0;
+    margin: 0;
+}
+
+/*  COLUMN SETUP  */
+.col {
+    display: block;
+    float: left;
+    margin: 1% 0 1% 1.6%;
+}
+
+.col:first-child {
+    margin-left: 0;
+}
+
+/*  GROUPING  */
+.group:before,
+.group:after {
+    content: "";
+    display: table;
+}
+
+.group:after {
+    clear: both;
+}
+
+.group {
+    zoom: 1; /* For IE 6/7 */
+}
+
+/*  GRID OF THREE  */
+.span_3_of_3 {
+    width: 100%;
+}
+.span_2_of_3 {
+    width: 66.1%;
+}
+.span_1_of_3 {
+    width: 32.2%;
+}
+
+/*  GO FULL WIDTH AT LESS THAN 768 PIXELS */
+
+@media only screen and (max-width: 768px) {
+    .col { margin: 1% 0 1% 0;}
+    .span_3_of_3, .span_2_of_3, .span_1_of_3 { width: 100%; }
+}

@@ -281,7 +281,9 @@ class EDD_RI {
 
 		$download_files = edd_get_download_files( $download_id );
 
-		$file = apply_filters( 'edd_requested_file', $download_files[ 0 ][ 'file' ], $download_files, '' );
+        	$download_file = array_shift( $download_files );
+
+		$file = apply_filters( 'edd_requested_file', $download_file[ 'file' ], $download_files, '' );
 
 		$this->build_file( $file );
 

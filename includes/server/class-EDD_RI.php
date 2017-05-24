@@ -262,7 +262,7 @@ class EDD_RI {
 		if ( $price > 0 ) {
 
 			$args[ 'key' ] = urldecode( $data[ 'license' ] );
-			$edd_sl        = function_exists( ' edd_software_licensing' ) ? edd_software_licensing() : false;
+			$edd_sl        = function_exists( 'edd_software_licensing' ) ? edd_software_licensing() : false;
 
 			if ( false === $edd_sl ) {
 				die( 'error' );

@@ -1,9 +1,0 @@
-{
-    "name": "aristath/edd-remote-installer",
-    "description": "Allows remote installation of WordPress plugins and themes.",
-    "license": "GPL-3.0",
-    "homepage": "https://github.com/aristath/edd-remote-installer",
-    "require": {
-        "afragen/github-updater": "^5.3"
-    }
-}
